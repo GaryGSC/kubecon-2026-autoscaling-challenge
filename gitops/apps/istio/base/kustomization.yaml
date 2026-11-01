@@ -1,0 +1,55 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: istio-system
+
+# Istio 1.29 is the version tested by Knative net-istio v1.24.0.
+# Single instance everywhere - no HPA, 1 replica - leave the CPU to the tutorial workloads.
+helmCharts:
+- name: base
+  repo: https://istio-release.storage.googleapis.com/charts
+  version: 1.29.10
+  releaseName: istio-base
+  namespace: istio-system
+  includeCRDs: true
+  valuesInline:
+    defaultRevision: default
+- name: istiod
+  repo: https://istio-release.storage.googleapis.com/charts
+  version: 1.29.10
+  releaseName: istiod
+  namespace: istio-system
+  valuesInline:
+    autoscaleEnabled: false
+    replicaCount: 1
+    resources:
+      requests:
+        cpu: 50m
+        memory: 256Mi
+- name: gateway
+  repo: https://istio-release.storage.googleapis.com/charts
+  version: 1.29.10
+  # net-istio expects the "istio: ingressgateway" selector the chart derives from this name
+  releaseName: istio-ingressgateway
+  namespace: istio-system
+  valuesInline:
+    autoscaling:
+      enabled: false
+    replicaCount: 1
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+      limits:
+        cpu: "2"
+        memory: 1Gi
+
+patches:
+# the gateway pod is injected by istiod - create it only after istiod is healthy
+- target:
+    kind: Deployment
+    name: istio-ingressgateway
+  patch: |-
+    - op: add
+      path: /metadata/annotations
+      value:
+        argocd.argoproj.io/sync-wave: "1"

@@ -1,0 +1,93 @@
+.slidev-layout {
+  background: #0d1117;
+  color: #e2e8f0;
+}
+
+:root {
+  --kcd-blue: #0086FF;
+  --kcd-blue-dark: #0066cc;
+  --kcd-ink: #0a0a0a;
+  --kcd-mute: #6b7280;
+  --kcd-warn: #f59e0b;
+  --kcd-danger: #ef4444;
+  --kcd-ok: #10b981;
+}
+
+.slidev-layout h1 {
+  color: var(--kcd-blue);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.slidev-layout h2 {
+  color: var(--kcd-blue-dark);
+  font-weight: 600;
+}
+
+.slidev-layout.cover {
+  background: linear-gradient(135deg, var(--kcd-blue) 0%, #003a99 100%);
+  color: #fff;
+}
+
+.slidev-layout.cover h1,
+.slidev-layout.cover h2,
+.slidev-layout.cover p {
+  color: #fff;
+}
+
+.kcd-source {
+  font-size: 0.7rem;
+  color: var(--kcd-mute);
+  font-style: italic;
+  margin-top: 1.5rem;
+}
+
+.kcd-pill {
+  display: inline-block;
+  padding: 0.15rem 0.6rem;
+  border-radius: 999px;
+  background: var(--kcd-blue);
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+code {
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+}
+
+.kcd-card {
+  background: #0a2540;
+  border-left: 4px solid var(--kcd-blue);
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  color: #f1f5f9;
+}
+
+.kcd-card strong { color: #ffffff; }
+.kcd-card em { color: #b9d4ff; font-style: italic; }
+.kcd-card code {
+  background: rgba(255, 255, 255, 0.12);
+  color: #b9d4ff;
+  padding: 0.05rem 0.3rem;
+  border-radius: 3px;
+}
+
+.kcd-card-ok     { border-left-color: var(--kcd-ok);     background: #052e22; }
+.kcd-card-warn   { border-left-color: var(--kcd-warn);   background: #3a2a05; }
+.kcd-card-danger { border-left-color: var(--kcd-danger); background: #3a0a0a; }
+
+.chat {
+  background: #0f172a;
+  border-radius: 8px;
+  padding: 0.6rem 0.9rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+  color: #e2e8f0;
+  border-left: 3px solid var(--kcd-blue);
+  margin-bottom: 0.4rem;
+}
+.chat .who { color: #94a3b8; font-weight: 600; margin-right: 0.4rem; }
+.chat .who.bot { color: var(--kcd-blue); }
+.chat .who.alert { color: var(--kcd-danger); }
+.chat .who.human { color: #fbbf24; }

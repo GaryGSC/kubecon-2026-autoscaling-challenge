@@ -1,0 +1,7 @@
+.idea/
+.vscode/
+*.swp
+.DS_Store
+app-java/target/
+# downloaded by kustomize --enable-helm
+gitops/apps/*/base/charts/

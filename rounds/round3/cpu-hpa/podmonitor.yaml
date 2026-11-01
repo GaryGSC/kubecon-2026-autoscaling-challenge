@@ -1,0 +1,15 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: app
+spec:
+  selector:
+    matchLabels:
+      app: app
+  podMetricsEndpoints:
+  - port: nginx-metrics
+    interval: 5s
+  - port: log-metrics
+    interval: 5s
+  - port: fpm-metrics
+    interval: 5s

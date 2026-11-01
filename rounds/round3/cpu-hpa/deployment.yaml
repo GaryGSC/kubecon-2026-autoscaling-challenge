@@ -1,0 +1,100 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: app
+  template:
+    metadata:
+      labels:
+        app: app
+    spec:
+      containers:
+      # nginx and php-fpm scale together - one Pod, two app containers
+      - name: nginx
+        image: nginx:1.29-alpine
+        ports:
+        - name: http
+          containerPort: 8080
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: http
+          periodSeconds: 2
+        resources:
+          requests:
+            cpu: 50m
+            memory: 32Mi
+          limits:
+            cpu: 100m
+            memory: 64Mi
+        volumeMounts:
+        - name: nginx-config
+          mountPath: /etc/nginx/nginx.conf
+          subPath: nginx.conf
+        - name: logs
+          mountPath: /var/log/nginx
+      - name: php-fpm
+        image: ghcr.io/depeche-io/kubecon-2026-autoscaling-challenge/app-php:main
+        env:
+        - name: FPM_WORKERS
+          value: "5"
+        resources:
+          requests:
+            cpu: 50m
+            memory: 64Mi
+          limits:
+            cpu: 200m
+            memory: 128Mi
+      - name: nginx-exporter
+        image: nginx/nginx-prometheus-exporter:1.5.3
+        args: ["--nginx.scrape-uri=http://127.0.0.1:8080/stub_status"]
+        ports:
+        - name: nginx-metrics
+          containerPort: 9113
+        resources:
+          requests:
+            cpu: 10m
+            memory: 16Mi
+          limits:
+            memory: 32Mi
+      - name: log-exporter
+        image: quay.io/martinhelmich/prometheus-nginxlog-exporter:v1.11.0
+        args: ["-config-file", "/etc/nginxlog/nginxlog-exporter.hcl"]
+        ports:
+        - name: log-metrics
+          containerPort: 4040
+        resources:
+          requests:
+            cpu: 10m
+            memory: 16Mi
+          limits:
+            memory: 64Mi
+        volumeMounts:
+        - name: nginx-config
+          mountPath: /etc/nginxlog
+        - name: logs
+          mountPath: /var/log/nginx
+          readOnly: true
+      - name: fpm-exporter
+        image: hipages/php-fpm_exporter:2.2.0
+        args: ["server", "--phpfpm.scrape-uri", "tcp://127.0.0.1:9000/fpm-status"]
+        ports:
+        - name: fpm-metrics
+          containerPort: 9253
+        resources:
+          requests:
+            cpu: 10m
+            memory: 16Mi
+          limits:
+            memory: 32Mi
+      volumes:
+      - name: nginx-config
+        configMap:
+          name: app-nginx
+      - name: logs
+        emptyDir: {}
+

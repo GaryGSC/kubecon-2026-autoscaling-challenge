@@ -1,0 +1,1 @@
+{"appName":"cpu-hpa","userGivenName":"cpu-hpa","destNamespace":"cpu-hpa","destServer":"https://kubernetes.default.svc","srcPath":"rounds/round1/cpu-hpa","srcRepoURL":"https://github.com/depeche-io/kubecon-2026-autoscaling-challenge.git","srcTargetRevision":"","labels":null,"annotations":null}

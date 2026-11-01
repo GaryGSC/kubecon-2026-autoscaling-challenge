@@ -1,0 +1,1 @@
+{"appName":"benchmark-knative-kpa","userGivenName":"benchmark-knative-kpa","destNamespace":"knative-kpa","destServer":"https://kubernetes.default.svc","srcPath":"gitops/apps/benchmark-knative-kpa/overlays/platform","srcRepoURL":"https://github.com/depeche-io/kubecon-2026-autoscaling-challenge.git","srcTargetRevision":"","labels":null,"annotations":null}

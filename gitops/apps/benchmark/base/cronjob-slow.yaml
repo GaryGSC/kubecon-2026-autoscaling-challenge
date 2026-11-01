@@ -1,0 +1,71 @@
+# Run on demand: Argo CD UI -> platform-benchmark-<variant> -> bench-slow -> "Create Job"
+# (or: kubectl -n <variant> create job --from=cronjob/bench-slow bench-slow-$(date +%s))
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: bench-slow
+spec:
+  # never fires on its own: suspended, and Feb 29 04:17 is far from any session slot
+  schedule: "17 4 29 2 *"
+  suspend: true
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 5
+  failedJobsHistoryLimit: 5
+  jobTemplate:
+    spec:
+      backoffLimit: 0
+      ttlSecondsAfterFinished: 86400
+      template:
+        metadata:
+          labels:
+            app: k6-bench
+            scenario: slow
+        spec:
+          restartPolicy: Never
+          containers:
+          - name: k6
+            image: grafana/k6:2.3.0
+            args:
+            - run
+            - --no-color
+            - -o
+            - experimental-prometheus-rw
+            - --tag
+            - namespace=$(POD_NAMESPACE)
+            - --tag
+            - k8s_cluster=k3d-autoscaling
+            - --tag
+            - testid=$(JOB_NAME)
+            - /scripts/bench.js
+            env:
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: JOB_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.labels['job-name']
+            - name: TARGET
+              value: http://app.$(POD_NAMESPACE).svc.cluster.local
+            - name: K6_PROMETHEUS_RW_SERVER_URL
+              value: http://kps-kube-prometheus-stack-prometheus.monitoring.svc:9090/api/v1/write
+            - name: K6_PROMETHEUS_RW_TREND_STATS
+              value: p(50),p(90),p(99),avg,max
+            - name: K6_PROMETHEUS_RW_PUSH_INTERVAL
+              value: 5s
+            - name: SCENARIO
+              value: slow
+            resources:
+              requests:
+                cpu: 500m
+                memory: 256Mi
+              limits:
+                memory: 1Gi
+            volumeMounts:
+            - name: scripts
+              mountPath: /scripts
+          volumes:
+          - name: scripts
+            configMap:
+              name: k6-bench

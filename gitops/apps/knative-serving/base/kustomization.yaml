@@ -1,0 +1,60 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+- https://github.com/knative/serving/releases/download/knative-v1.24.0/serving-core.yaml
+- https://github.com/knative-extensions/net-istio/releases/download/knative-v1.24.0/net-istio.yaml
+- monitors.yaml
+
+patches:
+# single instance - drop the HA scaffolding (activator/webhook HPAs and PDBs)
+- patch: |-
+    $patch: delete
+    apiVersion: autoscaling/v2
+    kind: HorizontalPodAutoscaler
+    metadata:
+      name: activator
+      namespace: knative-serving
+- patch: |-
+    $patch: delete
+    apiVersion: autoscaling/v2
+    kind: HorizontalPodAutoscaler
+    metadata:
+      name: webhook
+      namespace: knative-serving
+- patch: |-
+    $patch: delete
+    apiVersion: policy/v1
+    kind: PodDisruptionBudget
+    metadata:
+      name: activator-pdb
+      namespace: knative-serving
+- patch: |-
+    $patch: delete
+    apiVersion: policy/v1
+    kind: PodDisruptionBudget
+    metadata:
+      name: webhook-pdb
+      namespace: knative-serving
+# http://<ksvc>.<namespace>.127.0.0.1.sslip.io:8080 reaches the Istio gateway through the k3d load balancer
+- patch: |-
+    apiVersion: v1
+    kind: ConfigMap
+    metadata:
+      name: config-domain
+      namespace: knative-serving
+    data:
+      127.0.0.1.sslip.io: ""
+# Knative >= 1.19 exports no metrics by default - expose Prometheus endpoints:
+# control plane on :9090 (http-metrics), queue-proxy on :9091 (http-usermetric)
+- patch: |-
+    apiVersion: v1
+    kind: ConfigMap
+    metadata:
+      name: config-observability
+      namespace: knative-serving
+    data:
+      metrics-protocol: prometheus
+      request-metrics-protocol: prometheus
+      metrics-export-interval: 5s
+      request-metrics-export-interval: 5s

@@ -1,0 +1,35 @@
+# k3d v5.9.0 - single node, Pod-level autoscaling only (no node autoscaling)
+apiVersion: k3d.io/v1alpha5
+kind: Simple
+metadata:
+  name: autoscaling
+servers: 1
+agents: 0
+image: rancher/k3s:v1.36.5-k3s1
+ports:
+# Istio ingress gateway (Knative services) via the k3s service load balancer
+- port: 8080:80
+  nodeFilters:
+  - loadbalancer
+# Argo CD
+- port: 30080:30080
+  nodeFilters:
+  - server:0
+# Grafana
+- port: 30030:30030
+  nodeFilters:
+  - server:0
+# Prometheus
+- port: 30090:30090
+  nodeFilters:
+  - server:0
+options:
+  k3s:
+    extraArgs:
+    # Istio is the ingress; k3s metrics-server stays on for the HPA
+    - arg: --disable=traefik
+      nodeFilters:
+      - server:*
+  kubeconfig:
+    updateDefaultKubeconfig: true
+    switchCurrentContext: true

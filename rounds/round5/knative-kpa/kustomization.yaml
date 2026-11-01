@@ -1,0 +1,32 @@
+# Round 5, requests-in-flight autoscaling: round 1 nginx, scale to zero + imagePullPolicy: Always.
+# Idle for ~60s -> 0 Pods; the next request waits in the activator for a cold start.
+# kubectl apply -k rounds/round5/knative-kpa
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+- ../../round1/knative-kpa
+
+patches:
+- target:
+    kind: Service
+    group: serving.knative.dev
+    name: app
+  patch: |-
+    - op: replace
+      path: /spec/template/metadata/annotations/autoscaling.knative.dev~1min-scale
+      value: "0"
+- target:
+    kind: Service
+    group: serving.knative.dev
+    name: app
+  patch: |-
+    - op: add
+      path: /spec/template/spec/containers/0/imagePullPolicy
+      value: Always
+    - op: add
+      path: /spec/template/spec/containers/1/imagePullPolicy
+      value: Always
+    - op: add
+      path: /spec/template/spec/containers/2/imagePullPolicy
+      value: Always

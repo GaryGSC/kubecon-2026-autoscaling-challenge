@@ -1,0 +1,20 @@
+{
+  "name": "KubeCon 2026 Autoscaling Challenge",
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu-24.04",
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {}
+  },
+  "hostRequirements": {
+    "cpus": 4,
+    "memory": "16gb"
+  },
+  "postCreateCommand": "bash scripts/install-tools.sh",
+  "postStartCommand": "bash scripts/up.sh",
+  "forwardPorts": [30080, 30030, 30090, 8080],
+  "portsAttributes": {
+    "30080": { "label": "Argo CD" },
+    "30030": { "label": "Grafana" },
+    "30090": { "label": "Prometheus" },
+    "8080": { "label": "Istio gateway (Knative)" }
+  }
+}

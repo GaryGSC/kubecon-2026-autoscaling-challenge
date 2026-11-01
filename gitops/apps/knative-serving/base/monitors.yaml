@@ -1,0 +1,45 @@
+# Based on knative-extensions/monitoring config/serving-monitors.yaml (5s instead of 30s)
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: autoscaler
+  namespace: knative-serving
+spec:
+  selector:
+    matchLabels:
+      app: autoscaler
+  endpoints:
+  - port: http-metrics
+    interval: 5s
+    honorLabels: true
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: activator
+  namespace: knative-serving
+spec:
+  selector:
+    matchLabels:
+      app: activator
+  endpoints:
+  - port: http-metrics
+    interval: 5s
+    honorLabels: true
+---
+# queue-proxy sidecar of every Knative revision Pod
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: queue-proxy
+  namespace: knative-serving
+spec:
+  namespaceSelector:
+    any: true
+  selector:
+    matchExpressions:
+    - key: serving.knative.dev/revision
+      operator: Exists
+  podMetricsEndpoints:
+  - port: http-usermetric
+    interval: 5s

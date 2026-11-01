@@ -1,0 +1,10 @@
+# Round 2, CPU-based autoscaling: Go app with 10 workers, waiting ?ms=N per request.
+# kubectl apply -k rounds/round2/cpu-hpa
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: cpu-hpa
+
+resources:
+- deployment.yaml
+- ../../common/cpu-hpa
+- podmonitor.yaml

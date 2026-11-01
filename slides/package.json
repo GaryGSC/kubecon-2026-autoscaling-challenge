@@ -1,0 +1,21 @@
+{
+  "name": "autoscaling-challenge-slides",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "slidev slides.md --open",
+    "build": "slidev build slides.md",
+    "showcase": "slidev build slides.md && npx serve dist",
+    "export": "slidev export slides.md",
+    "export:pdf": "slidev export slides.md --output autoscaling-reality-check.pdf"
+  },
+  "dependencies": {
+    "@slidev/cli": "^52.15.2",
+    "@slidev/theme-default": "^0.25.0",
+    "slidev-addon-qrcode": "^1.0.2",
+    "vue": "^3.4.0"
+  },
+  "devDependencies": {
+    "playwright-chromium": "^1.60.0"
+  }
+}

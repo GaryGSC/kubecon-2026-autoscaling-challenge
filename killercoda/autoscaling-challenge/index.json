@@ -1,0 +1,23 @@
+{
+  "title": "Autoscaling Reality Check: The Hands-On HTTP Optimization Challenge",
+  "description": "KubeCon + CloudNativeCon North America 2026 tutorial - Pod-level autoscaling (CPU HPA vs. Knative requests-in-flight) under a mixed HTTP benchmark.",
+  "details": {
+    "intro": {
+      "text": "intro.md",
+      "background": "background.sh",
+      "foreground": "foreground.sh"
+    },
+    "steps": [
+      {
+        "title": "Explore the platform",
+        "text": "step1.md"
+      }
+    ],
+    "finish": {
+      "text": "finish.md"
+    }
+  },
+  "backend": {
+    "imageid": "ubuntu"
+  }
+}

@@ -1,0 +1,17 @@
+# the actuator port 8081 can't be declared on a Knative Service - rewrite the target address
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: app
+spec:
+  selector:
+    matchLabels:
+      serving.knative.dev/service: app
+  podMetricsEndpoints:
+  - port: user-port
+    path: /metrics
+    interval: 5s
+    relabelings:
+    - sourceLabels: [__meta_kubernetes_pod_ip]
+      targetLabel: __address__
+      replacement: $1:8081

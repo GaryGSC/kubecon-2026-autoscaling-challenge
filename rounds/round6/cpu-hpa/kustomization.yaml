@@ -1,0 +1,13 @@
+# Round 6, CPU-based autoscaling: BFF (Service "app", the benchmark target) -> backend,
+# both the round 2 Go app, each with its own HPA.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: cpu-hpa
+
+resources:
+- deployment-bff.yaml
+- ../../common/cpu-hpa
+- deployment-backend.yaml
+- service-backend.yaml
+- hpa-backend.yaml
+- podmonitor.yaml

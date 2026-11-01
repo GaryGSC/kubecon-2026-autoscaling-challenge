@@ -1,0 +1,10 @@
+# Round 1, requests-in-flight autoscaling: nginx as a Knative Service (KPA, concurrency).
+# kubectl apply -k rounds/round1/knative-kpa
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: knative-kpa
+
+resources:
+- ../base
+- ksvc.yaml
+- podmonitor.yaml

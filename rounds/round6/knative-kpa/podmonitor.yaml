@@ -1,0 +1,14 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: app
+spec:
+  selector:
+    matchExpressions:
+    - key: serving.knative.dev/service
+      operator: In
+      values: [app, backend]
+  podMetricsEndpoints:
+  - port: user-port
+    path: /metrics
+    interval: 5s

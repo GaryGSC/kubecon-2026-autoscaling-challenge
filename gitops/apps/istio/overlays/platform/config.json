@@ -1,0 +1,1 @@
+{"appName":"istio","userGivenName":"istio","destNamespace":"istio-system","destServer":"https://kubernetes.default.svc","srcPath":"gitops/apps/istio/overlays/platform","srcRepoURL":"https://github.com/depeche-io/kubecon-2026-autoscaling-challenge.git","srcTargetRevision":"","labels":null,"annotations":null}

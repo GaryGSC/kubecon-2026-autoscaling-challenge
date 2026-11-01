@@ -1,0 +1,24 @@
+# Round 5, CPU-based autoscaling: round 1 nginx + imagePullPolicy: Always.
+# The HPA can NOT scale to zero: CPU metrics need a running Pod, and minReplicas: 0
+# requires the alpha HPAScaleToZero feature gate plus object/external metrics.
+# kubectl apply -k rounds/round5/cpu-hpa
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+- ../../round1/cpu-hpa
+
+patches:
+- target:
+    kind: Deployment
+    name: app
+  patch: |-
+    - op: add
+      path: /spec/template/spec/containers/0/imagePullPolicy
+      value: Always
+    - op: add
+      path: /spec/template/spec/containers/1/imagePullPolicy
+      value: Always
+    - op: add
+      path: /spec/template/spec/containers/2/imagePullPolicy
+      value: Always

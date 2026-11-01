@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+# Installs the pinned CLI tools (Linux/macOS, amd64/arm64). Used by Codespaces and Killercoda.
+set -euo pipefail
+
+K3D_VERSION=v5.9.0
+KUBECTL_VERSION=v1.36.5
+AUTOPILOT_VERSION=v0.4.20
+
+OS=$(uname | tr '[:upper:]' '[:lower:]')
+ARCH=$(uname -m); case "$ARCH" in x86_64) ARCH=amd64 ;; aarch64|arm64) ARCH=arm64 ;; esac
+BIN=/usr/local/bin
+SUDO=$([ -w "$BIN" ] && echo "" || echo sudo)
+TMP=$(mktemp -d); trap 'rm -rf "$TMP"' EXIT
+
+install_bin() { $SUDO install -m 0755 "$1" "$BIN/$2"; echo "installed $2"; }
+
+command -v k3d >/dev/null || {
+  curl -fsSLo "$TMP/k3d" "https://github.com/k3d-io/k3d/releases/download/${K3D_VERSION}/k3d-${OS}-${ARCH}"
+  install_bin "$TMP/k3d" k3d
+}
+
+command -v kubectl >/dev/null || {
+  curl -fsSLo "$TMP/kubectl" "https://dl.k8s.io/release/${KUBECTL_VERSION}/bin/${OS}/${ARCH}/kubectl"
+  install_bin "$TMP/kubectl" kubectl
+}
+
+command -v argocd-autopilot >/dev/null || {
+  curl -fsSL "https://github.com/argoproj-labs/argocd-autopilot/releases/download/${AUTOPILOT_VERSION}/argocd-autopilot-${OS}-${ARCH}.tar.gz" | tar zx -C "$TMP"
+  install_bin "$TMP/argocd-autopilot-${OS}-${ARCH}" argocd-autopilot
+}

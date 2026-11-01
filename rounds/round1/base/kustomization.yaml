@@ -1,0 +1,11 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+configMapGenerator:
+- name: app-html
+  files:
+  - index.html
+- name: app-nginx
+  files:
+  - nginx.conf
+  - nginxlog-exporter.hcl

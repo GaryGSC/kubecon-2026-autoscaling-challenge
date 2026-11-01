@@ -1,0 +1,11 @@
+# Round 3, CPU-based autoscaling: nginx + php-fpm as two containers in one Pod.
+# kubectl apply -k rounds/round3/cpu-hpa
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: cpu-hpa
+
+resources:
+- ../base
+- deployment.yaml
+- ../../common/cpu-hpa
+- podmonitor.yaml

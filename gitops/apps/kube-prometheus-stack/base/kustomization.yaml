@@ -1,0 +1,80 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: monitoring
+
+configMapGenerator:
+- name: dashboard-autoscaling-challenge
+  files:
+  - autoscaling-challenge.json=dashboards/autoscaling-challenge.json
+  options:
+    disableNameSuffixHash: true
+    labels:
+      grafana_dashboard: "1"
+
+helmCharts:
+- name: kube-prometheus-stack
+  repo: https://prometheus-community.github.io/helm-charts
+  version: 92.17.0
+  releaseName: kps
+  namespace: monitoring
+  includeCRDs: true
+  valuesInline:
+    alertmanager:
+      enabled: false
+
+    # k3s embeds these in the k3s binary - nothing to scrape
+    kubeControllerManager:
+      enabled: false
+    kubeScheduler:
+      enabled: false
+    kubeProxy:
+      enabled: false
+    kubeEtcd:
+      enabled: false
+
+    # no admission webhook jobs (helm hooks) - keeps the Argo CD sync simple
+    prometheusOperator:
+      tls:
+        enabled: false
+      admissionWebhooks:
+        enabled: false
+
+    grafana:
+      # public tutorial credentials
+      adminUser: admin
+      adminPassword: "@utoSc4ling"
+      service:
+        type: NodePort
+        nodePort: 30030
+
+    prometheus:
+      service:
+        type: NodePort
+        nodePort: 30090
+      prometheusSpec:
+        replicas: 1
+        # 5s scrapes = lots of data points during the 4-minute benchmark;
+        # the timeout must stay below the interval (default 10s would be rejected)
+        scrapeInterval: 5s
+        scrapeTimeout: 4s
+        evaluationInterval: 5s
+        retention: 2d
+        resources:
+          requests:
+            cpu: 200m
+            memory: 512Mi
+          limits:
+            memory: 2Gi
+        # k6 pushes its results via Prometheus remote write
+        enableRemoteWriteReceiver: true
+        # every scraped series gets k8s_cluster (k6 adds it as a tag on its own)
+        scrapeClasses:
+        - name: default
+          default: true
+          relabelings:
+          - targetLabel: k8s_cluster
+            replacement: k3d-autoscaling
+        # pick up ServiceMonitors / PodMonitors / rules from any namespace
+        serviceMonitorSelectorNilUsesHelmValues: false
+        podMonitorSelectorNilUsesHelmValues: false
+        ruleSelectorNilUsesHelmValues: false
