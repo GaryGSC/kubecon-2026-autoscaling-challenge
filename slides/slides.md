@@ -430,7 +430,7 @@ Scale the wrong tier and you just move the queue.
 
 </div>
 
-<div class="kcd-source">All numbers from the "Autoscaling Reality Check" Grafana dashboard, one <code>bench-all</code> run.</div>
+<div class="kcd-source">Draft. All numbers from the "Autoscaling Reality Check" dashboard, one <code>bench-all</code> run - planned: every cluster remote-writes to a central Grafana leaderboard.</div>
 
 ---
 
