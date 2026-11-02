@@ -588,10 +588,10 @@ data:
             "type": "prometheus",
             "uid": "${datasource}"
           },
-          "description": "From the k6 native histogram, all scenarios together, over the rate interval.",
+          "description": "From the k6 native histogram over the rate interval: p50-p99 of all scenarios together, plus p99 per scenario.",
           "gridPos": {
             "h": 8,
-            "w": 8,
+            "w": 14,
             "x": 4,
             "y": 19
           },
@@ -641,60 +641,26 @@ data:
             },
             {
               "refId": "C",
+              "expr": "histogram_quantile(0.95, sum(rate(k6_http_req_duration_seconds{k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\"}[$rate_interval])))",
+              "legendFormat": "p95",
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${datasource}"
+              }
+            },
+            {
+              "refId": "D",
               "expr": "histogram_quantile(0.99, sum(rate(k6_http_req_duration_seconds{k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\"}[$rate_interval])))",
               "legendFormat": "p99",
               "datasource": {
                 "type": "prometheus",
                 "uid": "${datasource}"
               }
-            }
-          ]
-        },
-        {
-          "type": "timeseries",
-          "title": "p99 latency by scenario (k6)",
-          "id": 12,
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${datasource}"
-          },
-          "description": "",
-          "gridPos": {
-            "h": 8,
-            "w": 6,
-            "x": 12,
-            "y": 19
-          },
-          "fieldConfig": {
-            "defaults": {
-              "unit": "s",
-              "custom": {
-                "lineWidth": 2,
-                "fillOpacity": 0,
-                "stacking": {
-                  "mode": "none"
-                },
-                "showPoints": "never"
-              },
-              "min": 0
             },
-            "overrides": []
-          },
-          "options": {
-            "legend": {
-              "displayMode": "list",
-              "placement": "bottom"
-            },
-            "tooltip": {
-              "mode": "multi",
-              "sort": "desc"
-            }
-          },
-          "targets": [
             {
-              "refId": "A",
+              "refId": "E",
               "expr": "histogram_quantile(0.99, sum by (scenario) (rate(k6_http_req_duration_seconds{k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\"}[$rate_interval])))",
-              "legendFormat": "{{scenario}}",
+              "legendFormat": "p99 {{scenario}}",
               "datasource": {
                 "type": "prometheus",
                 "uid": "${datasource}"
