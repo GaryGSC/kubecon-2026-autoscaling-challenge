@@ -994,7 +994,7 @@ data:
           "description": "",
           "gridPos": {
             "h": 7,
-            "w": 24,
+            "w": 16,
             "x": 0,
             "y": 35
           },
@@ -1046,6 +1046,74 @@ data:
               "refId": "C",
               "expr": "sum(kube_pod_status_ready{k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\",condition=\"true\",pod!~\"bench-.*\"})",
               "legendFormat": "ready",
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${datasource}"
+              }
+            }
+          ]
+        },
+        {
+          "type": "bargauge",
+          "title": "Pod startup time (created -> first Ready)",
+          "id": 34,
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          },
+          "description": "Per app Pod seen in the time range (k6 excluded): first Ready minus creation. Includes scheduling, image pull, app start and readiness probe.",
+          "gridPos": {
+            "h": 7,
+            "w": 8,
+            "x": 16,
+            "y": 35
+          },
+          "fieldConfig": {
+            "defaults": {
+              "unit": "s",
+              "min": 0,
+              "decimals": 0,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "orange",
+                    "value": 10
+                  },
+                  {
+                    "color": "red",
+                    "value": 30
+                  }
+                ]
+              },
+              "color": {
+                "mode": "thresholds"
+              }
+            },
+            "overrides": []
+          },
+          "options": {
+            "orientation": "horizontal",
+            "displayMode": "basic",
+            "showUnfilled": true,
+            "valueMode": "color",
+            "namePlacement": "left",
+            "reduceOptions": {
+              "calcs": [
+                "lastNotNull"
+              ]
+            }
+          },
+          "targets": [
+            {
+              "refId": "A",
+              "expr": "sort_desc(min_over_time(kube_pod_status_ready_time{k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\",pod!~\"bench-.*\"}[$__range]) - on(namespace, pod) group_left max_over_time(kube_pod_created{k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\",pod!~\"bench-.*\"}[$__range]))",
+              "instant": true,
+              "legendFormat": "{{pod}}",
               "datasource": {
                 "type": "prometheus",
                 "uid": "${datasource}"
