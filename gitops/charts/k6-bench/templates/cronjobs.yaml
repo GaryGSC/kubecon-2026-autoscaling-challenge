@@ -32,7 +32,7 @@ spec:
             - run
             - --no-color
             # the end-of-test summary keeps every sample in memory (~360 B per request) - results are in Grafana
-            - --no-summary
+            - --summary-mode=disabled
             - -o
             - experimental-prometheus-rw
             - --tag
