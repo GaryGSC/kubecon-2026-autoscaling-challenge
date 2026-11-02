@@ -307,7 +307,7 @@ Watch: *Busy workers vs. capacity* and *Queued requests* while CPU is flat.
 <div>
 
 - two app containers, **one scaling unit**
-- php-fpm `pm = static`, 5 workers
+- php-fpm `pm = static`, 10 workers
 - extra requests wait in the php-fpm listen backlog
 
 </div>

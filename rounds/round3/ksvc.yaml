@@ -42,7 +42,7 @@ spec:
         image: ghcr.io/depeche-io/kubecon-2026-autoscaling-challenge/app-php:main
         env:
         - name: FPM_WORKERS
-          value: "5"
+          value: "10"
         resources:
           requests:
             cpu: 50m
