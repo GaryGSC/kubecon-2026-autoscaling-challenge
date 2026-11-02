@@ -31,14 +31,14 @@ Benchmark CronJob example: [round1-cpu `bench-all`](http://localhost:30080/appli
 
 ## The benchmark
 
-All scenarios call `http://app.<namespace>/?minWait=<min>&maxWait=<max>` (k6 `shared-iterations`):
+All scenarios call `http://app.<namespace>/?minWait=<min>&maxWait=<max>` (k6 `constant-vus`, 90 s per scenario):
 
-| Scenario | Requests | Parallel (VUs) | `minWait` - `maxWait` (ms, random per request) |
+| Scenario | Duration | Parallel (VUs) | `minWait` - `maxWait` (ms, random per request) |
 |---|---:|---:|---|
-| `fast` | 1000 | 20 | 10 - 100 |
-| `slow` | 200 | 5 | 1000 - 2000 |
-| `random` | 300 | 10 | 200 - 1500 |
-| `all` | the three above in parallel | 35 | mixed |
+| `fast` | 90 s | 20 | 10 - 100 |
+| `slow` | 90 s | 5 | 1000 - 2000 |
+| `random` | 90 s | 10 | 200 - 1500 |
+| `all` | the three above one after another (fast, slow, random) = 270 s | 20 / 5 / 10 | mixed |
 
 The profiles are values of the Helm chart (`gitops/charts/k6-bench/values.yaml`; override per round in the Application's `helm.valuesObject`).
 

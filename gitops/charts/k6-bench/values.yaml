@@ -1,19 +1,19 @@
 # Load profiles. Every CronJob gets all of them as env vars (FAST_VUS, SLOW_MIN_WAIT, ...) and
-# files/bench.js reads them; bench-fast / bench-slow / bench-random run one, bench-all runs all three in parallel.
+# files/bench.js reads them; bench-fast / bench-slow / bench-random run one, bench-all runs all three one after another.
 # minWait/maxWait (ms): the app sleeps a random time in that range (?minWait=&maxWait=); apps that ignore it just answer.
+# seconds each scenario runs (constant VUs); bench-all takes 3x this
+duration: 90
+
 scenarios:
   fast:
-    iterations: 1000
     vus: 20
     minWait: 10
     maxWait: 100
   slow:
-    iterations: 200
     vus: 5
     minWait: 1000
     maxWait: 2000
   random:
-    iterations: 300
     vus: 10
     minWait: 200
     maxWait: 1500

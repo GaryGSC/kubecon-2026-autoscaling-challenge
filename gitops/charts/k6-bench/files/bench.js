@@ -1,5 +1,5 @@
 // k6 benchmark against the challenge app - TARGET is set per round namespace.
-// SCENARIO=fast|slow|random|all - "all" runs the three in parallel.
+// SCENARIO=fast|slow|random|all - each scenario runs DURATION (constant VUs); "all" runs the three one after another.
 // Profiles come from the chart values (env FAST_VUS, SLOW_MIN_WAIT, ... - defaults below match values.yaml).
 // The wait range is passed as ?minWait=<n>&maxWait=<n> (the app picks a random value in it); apps that ignore it (round 1 nginx) just answer.
 import http from 'k6/http';
@@ -10,32 +10,42 @@ const SCENARIO = __ENV.SCENARIO || 'all';
 
 const num = (name, fallback) => Number(__ENV[name] || fallback);
 
+// seconds per scenario
+const DURATION = num('DURATION', 90);
+
 const PROFILES = {
-  fast: { iterations: 1000, vus: 20, minWait: 10, maxWait: 100 },
-  slow: { iterations: 200, vus: 5, minWait: 1000, maxWait: 2000 },
-  random: { iterations: 300, vus: 10, minWait: 200, maxWait: 1500 },
+  fast: { vus: 20, minWait: 10, maxWait: 100 },
+  slow: { vus: 5, minWait: 1000, maxWait: 2000 },
+  random: { vus: 10, minWait: 200, maxWait: 1500 },
 };
 
-// apply env overrides: <PROFILE>_ITERATIONS, _VUS, _MIN_WAIT, _MAX_WAIT
+// apply env overrides: <PROFILE>_VUS, _MIN_WAIT, _MAX_WAIT
 for (const [name, p] of Object.entries(PROFILES)) {
   const prefix = name.toUpperCase();
-  p.iterations = num(`${prefix}_ITERATIONS`, p.iterations);
   p.vus = num(`${prefix}_VUS`, p.vus);
   p.minWait = num(`${prefix}_MIN_WAIT`, p.minWait);
   p.maxWait = num(`${prefix}_MAX_WAIT`, p.maxWait);
 }
 
+const selected = SCENARIO === 'all' ? Object.keys(PROFILES) : [SCENARIO];
+
+// in series: the i-th selected scenario starts after the previous ones finished
 const SCENARIOS = Object.fromEntries(
-  Object.entries(PROFILES).map(([name, p]) => [
+  selected.map((name, i) => [
     name,
-    { executor: 'shared-iterations', exec: name, iterations: p.iterations, vus: p.vus, maxDuration: '10m' },
+    {
+      executor: 'constant-vus',
+      exec: name,
+      vus: PROFILES[name].vus,
+      duration: `${DURATION}s`,
+      startTime: `${i * DURATION}s`,
+      gracefulStop: '30s',
+    },
   ]),
 );
 
-const selected = SCENARIO === 'all' ? Object.keys(SCENARIOS) : [SCENARIO];
-
 export const options = {
-  scenarios: Object.fromEntries(selected.map((s) => [s, SCENARIOS[s]])),
+  scenarios: SCENARIOS,
   summaryTrendStats: ['avg', 'min', 'med', 'p(90)', 'p(95)', 'p(99)', 'max'],
   // always-passing thresholds, only to get a per-scenario breakdown in the summary
   thresholds: Object.fromEntries(

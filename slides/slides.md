@@ -215,12 +215,12 @@ rounds/round2 … rounds/round6
 
 # The benchmark
 
-| Scenario | Requests | Parallel (VUs) | Wait per request |
+| Scenario | Duration | Parallel (VUs) | Wait per request |
 |---|---:|---:|---|
-| `fast` | 1000 | 20 | 10 – 100 ms |
-| `slow` | 200 | 5 | 1 – 2 s |
-| `random` | 300 | 10 | 200 ms – 1.5 s |
-| `all` | all three at once | 35 | mixed |
+| `fast` | 90 s | 20 | 10 – 100 ms |
+| `slow` | 90 s | 5 | 1 – 2 s |
+| `random` | 90 s | 10 | 200 ms – 1.5 s |
+| `all` | one after another, 270 s | 20 / 5 / 10 | mixed |
 
 <div class="mt-6">
 

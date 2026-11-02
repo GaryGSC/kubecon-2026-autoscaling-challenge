@@ -1,4 +1,4 @@
-# One CronJob per scenario: bench-fast, bench-slow, bench-random and bench-all (all three in parallel).
+# One CronJob per scenario: bench-fast, bench-slow, bench-random and bench-all (all three one after another).
 # Run on demand: Argo CD UI -> the round's app -> bench-<scenario> -> "Create Job"
 # (or: kubectl -n <namespace> create job --from=cronjob/bench-<scenario> bench-<scenario>-$(date +%s))
 {{- range $scenario := list "fast" "slow" "random" "all" }}
@@ -60,9 +60,9 @@ spec:
               value: 5s
             - name: SCENARIO
               value: {{ $scenario }}
+            - name: DURATION
+              value: {{ $.Values.duration | quote }}
             {{- range $name, $p := $.Values.scenarios }}
-            - name: {{ upper $name }}_ITERATIONS
-              value: {{ $p.iterations | quote }}
             - name: {{ upper $name }}_VUS
               value: {{ $p.vus | quote }}
             - name: {{ upper $name }}_MIN_WAIT
