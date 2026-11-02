@@ -1670,7 +1670,7 @@ data:
             "type": "prometheus",
             "uid": "${datasource}"
           },
-          "description": "Observed concurrency the KPA scales on. Panic window >> stable = burst; KPA enters panic mode at 2x target capacity.",
+          "description": "Requests in flight across all Pods of the service (what the KPA scales on) vs. the per-Pod target = autoscaling.knative.dev/target x container-concurrency-target-percentage (10 x 70 % = 7). Desired Pods = ceil(stable / target). Panic window >> stable = burst; KPA enters panic mode at 2x target capacity. max by service: old revisions report too.",
           "gridPos": {
             "h": 8,
             "w": 8,
@@ -1705,8 +1705,8 @@ data:
           "targets": [
             {
               "refId": "A",
-              "expr": "sum(kn_revision_concurrency_stable{k8s_cluster=\"$k8s_cluster\",k8s_namespace_name=\"$namespace\"})",
-              "legendFormat": "stable (60s window)",
+              "expr": "max by (kn_service_name) (kn_revision_concurrency_stable{k8s_cluster=\"$k8s_cluster\",k8s_namespace_name=\"$namespace\"})",
+              "legendFormat": "{{kn_service_name}} stable (60s window)",
               "datasource": {
                 "type": "prometheus",
                 "uid": "${datasource}"
@@ -1714,8 +1714,8 @@ data:
             },
             {
               "refId": "B",
-              "expr": "sum(kn_revision_concurrency_panic{k8s_cluster=\"$k8s_cluster\",k8s_namespace_name=\"$namespace\"})",
-              "legendFormat": "panic (6s window)",
+              "expr": "max by (kn_service_name) (kn_revision_concurrency_panic{k8s_cluster=\"$k8s_cluster\",k8s_namespace_name=\"$namespace\"})",
+              "legendFormat": "{{kn_service_name}} panic (6s window)",
               "datasource": {
                 "type": "prometheus",
                 "uid": "${datasource}"
@@ -1723,8 +1723,8 @@ data:
             },
             {
               "refId": "C",
-              "expr": "sum(kn_revision_concurrency_target{k8s_cluster=\"$k8s_cluster\",k8s_namespace_name=\"$namespace\"})",
-              "legendFormat": "target per Pod",
+              "expr": "max by (kn_service_name) (kn_revision_concurrency_target{k8s_cluster=\"$k8s_cluster\",k8s_namespace_name=\"$namespace\"})",
+              "legendFormat": "{{kn_service_name}} target per Pod",
               "datasource": {
                 "type": "prometheus",
                 "uid": "${datasource}"
