@@ -3,3 +3,5 @@
 *.swp
 .DS_Store
 app-java/target/
+# local `go build` output (module kubecon/app)
+app-go/app

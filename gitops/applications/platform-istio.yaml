@@ -73,6 +73,8 @@ spec:
     syncOptions:
     - CreateNamespace=true
     - ServerSideApply=true
+    # CRDs from other apps (ServiceMonitor, PodMonitor, Knative, Istio) may not exist yet - skip the dry run, retry applies later
+    - SkipDryRunOnMissingResource=true
     - RespectIgnoreDifferences=true
     # retry on transient failures (CRDs, istiod webhooks not ready yet)
     retry:

@@ -22,6 +22,8 @@ spec:
     syncOptions:
     - CreateNamespace=true
     - ServerSideApply=true
+    # CRDs from other apps (ServiceMonitor, PodMonitor, Knative, Istio) may not exist yet - skip the dry run, retry applies later
+    - SkipDryRunOnMissingResource=true
     retry:
       limit: 5
       backoff:
