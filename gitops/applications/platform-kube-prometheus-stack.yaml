@@ -44,6 +44,10 @@ spec:
           service:
             type: NodePort
             nodePort: 30030
+          # allow Grafana inside VS Code's Simple Browser / Codespaces port preview (an iframe)
+          grafana.ini:
+            security:
+              allow_embedding: true
 
         prometheus:
           service:

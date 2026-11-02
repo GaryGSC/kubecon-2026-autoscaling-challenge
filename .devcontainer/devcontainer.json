@@ -12,9 +12,9 @@
   "postStartCommand": "bash bin/up.sh",
   "forwardPorts": [30080, 30030, 30090, 8080],
   "portsAttributes": {
-    "30080": { "label": "Argo CD" },
-    "30030": { "label": "Grafana" },
-    "30090": { "label": "Prometheus" },
+    "30080": { "label": "Argo CD", "onAutoForward": "openBrowser" },
+    "30030": { "label": "Grafana", "onAutoForward": "openBrowser" },
+    "30090": { "label": "Prometheus", "onAutoForward": "openBrowser" },
     "8080": { "label": "Istio gateway (Knative)" }
   }
 }

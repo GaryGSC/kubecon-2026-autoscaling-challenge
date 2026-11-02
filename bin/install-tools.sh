@@ -22,3 +22,15 @@ command -v kubectl >/dev/null || {
   curl -fsSLo "$TMP/kubectl" "https://dl.k8s.io/release/${KUBECTL_VERSION}/bin/${OS}/${ARCH}/kubectl"
   install_bin "$TMP/kubectl" kubectl
 }
+
+# k = kubectl: a symlink works in every shell right away (incl. ones already open),
+# the alias in the rc files adds tab completion
+[ -e "$BIN/k" ] || { $SUDO ln -s "$(command -v kubectl)" "$BIN/k"; echo "installed k -> kubectl"; }
+for rc in ~/.bashrc ~/.zshrc; do
+  [ -f "$rc" ] || continue
+  grep -q "alias k=kubectl" "$rc" && continue
+  shell=$(basename "$rc" | sed 's/^\.//; s/rc$//')
+  printf '\nalias k=kubectl\nsource <(kubectl completion %s)\n' "$shell" >> "$rc"
+  [ "$shell" = bash ] && echo 'complete -o default -F __start_kubectl k' >> "$rc"
+  [ "$shell" = zsh ] && echo 'compdef k=kubectl' >> "$rc"
+done

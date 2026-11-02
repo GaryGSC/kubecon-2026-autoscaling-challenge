@@ -31,12 +31,13 @@ cd kubecon-2026-autoscaling-challenge
 ./bin/down.sh    # deletes it
 ```
 
-`up.sh` itself only talks to the `k3d-autoscaling` context.
+`up.sh` itself only talks to the `k3d-autoscaling` context. The docs use `k` for `kubectl` - locally run
+`alias k=kubectl` (Codespaces and Killercoda get it from `bin/install-tools.sh`).
 
 ### GitHub Codespaces
 
 *Code* -> *Codespaces* -> *Create codespace on main*. The dev container (4 cores / 16 GB) installs the tools
-(`bin/install-tools.sh`) and runs `up.sh` on start; ports 30080 / 30030 / 30090 are forwarded.
+(`bin/install-tools.sh`) and runs `up.sh` on start; ports 30080 / 30030 / 30090 are forwarded and open in a browser tab.
 
 ### Killercoda
 

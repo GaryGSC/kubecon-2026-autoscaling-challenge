@@ -20,6 +20,10 @@ configMapGenerator:
   # diff against what the API server would store (CRD defaults, Knative webhook mutations) -
   # avoids permanent OutOfSync on fields we don't spell out
   - controller.diff.server.side=true
+  # allow the UI inside VS Code's Simple Browser / Codespaces port preview (an iframe).
+  # "" can't disable the headers (empty falls back to the default); browsers ignore X-Frame-Options
+  # when the CSP sets frame-ancestors
+  - server.content.security.policy=frame-ancestors *;
 
 patches:
 # public tutorial credentials: admin / @utoSc4ling
