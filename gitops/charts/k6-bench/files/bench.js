@@ -49,8 +49,9 @@ export const options = {
   scenarios: SCENARIOS,
 };
 
+// 5s client timeout: a request still waiting after that counts as failed (status 0) - the user gave up
 function hit(p) {
-  const res = http.get(`${TARGET}/?minWait=${p.minWait}&maxWait=${p.maxWait}`, { timeout: '30s' });
+  const res = http.get(`${TARGET}/?minWait=${p.minWait}&maxWait=${p.maxWait}`, { timeout: '5s' });
   check(res, { 'status 200': (r) => r.status === 200 });
 }
 
