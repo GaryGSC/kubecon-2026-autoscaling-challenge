@@ -399,7 +399,7 @@ data:
             "type": "prometheus",
             "uid": "${datasource}"
           },
-          "description": "",
+          "description": "k6 requests in the selected time range; failed = not the expected response (non-2xx/3xx, timeout, connection error).",
           "gridPos": {
             "h": 4,
             "w": 4,
@@ -423,7 +423,32 @@ data:
               },
               "decimals": 0
             },
-            "overrides": []
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "failed"
+                },
+                "properties": [
+                  {
+                    "id": "thresholds",
+                    "value": {
+                      "mode": "absolute",
+                      "steps": [
+                        {
+                          "color": "green",
+                          "value": null
+                        },
+                        {
+                          "color": "red",
+                          "value": 1
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
           },
           "options": {
             "reduceOptions": {
@@ -433,13 +458,24 @@ data:
             },
             "colorMode": "value",
             "graphMode": "none",
-            "textMode": "value"
+            "textMode": "value_and_name"
           },
           "targets": [
             {
               "refId": "A",
               "expr": "sum(increase(k6_http_reqs_total{k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\"}[$__range]))",
               "instant": true,
+              "legendFormat": "total",
+              "datasource": {
+                "type": "prometheus",
+                "uid": "${datasource}"
+              }
+            },
+            {
+              "refId": "B",
+              "expr": "sum(increase(k6_http_reqs_total{k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\",expected_response=\"false\"}[$__range])) or vector(0)",
+              "instant": true,
+              "legendFormat": "failed",
               "datasource": {
                 "type": "prometheus",
                 "uid": "${datasource}"
@@ -588,7 +624,7 @@ data:
             "type": "prometheus",
             "uid": "${datasource}"
           },
-          "description": "From the k6 native histogram over the rate interval: p50-p99 of all scenarios together, plus p99 per scenario.",
+          "description": "From the k6 native histogram over the rate interval: p50-p95 of all scenarios together, plus p99 per scenario (scenarios run one after another).",
           "gridPos": {
             "h": 8,
             "w": 14,
@@ -650,15 +686,6 @@ data:
             },
             {
               "refId": "D",
-              "expr": "histogram_quantile(0.99, sum(rate(k6_http_req_duration_seconds{k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\"}[$rate_interval])))",
-              "legendFormat": "p99",
-              "datasource": {
-                "type": "prometheus",
-                "uid": "${datasource}"
-              }
-            },
-            {
-              "refId": "E",
               "expr": "histogram_quantile(0.99, sum by (scenario) (rate(k6_http_req_duration_seconds{k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\"}[$rate_interval])))",
               "legendFormat": "p99 {{scenario}}",
               "datasource": {
