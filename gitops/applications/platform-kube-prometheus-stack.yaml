@@ -30,6 +30,11 @@ spec:
         kubeEtcd:
           enabled: false
 
+        # container CPU / memory (cAdvisor) at the same 5s as everything else - the chart defaults it to 10s
+        kubelet:
+          serviceMonitor:
+            cAdvisorInterval: 5s
+
         # no admission webhook jobs (helm hooks) - keeps the Argo CD sync simple
         prometheusOperator:
           tls:
