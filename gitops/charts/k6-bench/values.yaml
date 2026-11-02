@@ -29,4 +29,7 @@ resources:
     cpu: 500m
     memory: 256Mi
   limits:
-    memory: 1Gi
+    memory: 512Mi
+
+# Go GC works harder near this instead of overshooting the memory limit (~90 % of it)
+goMemLimit: 460MiB

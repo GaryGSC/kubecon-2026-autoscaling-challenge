@@ -44,16 +44,9 @@ const SCENARIOS = Object.fromEntries(
   ]),
 );
 
+// no thresholds: each one keeps every sample of its metric in memory (results are in Grafana)
 export const options = {
   scenarios: SCENARIOS,
-  summaryTrendStats: ['avg', 'min', 'med', 'p(90)', 'p(95)', 'p(99)', 'max'],
-  // always-passing thresholds, only to get a per-scenario breakdown in the summary
-  thresholds: Object.fromEntries(
-    selected.flatMap((s) => [
-      [`http_req_duration{scenario:${s}}`, ['max>=0']],
-      [`http_req_failed{scenario:${s}}`, ['rate>=0']],
-    ]),
-  ),
 };
 
 function hit(p) {

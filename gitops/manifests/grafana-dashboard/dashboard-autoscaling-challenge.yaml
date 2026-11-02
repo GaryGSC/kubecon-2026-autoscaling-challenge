@@ -71,6 +71,24 @@ data:
               "text": "round1-cpu",
               "value": "round1-cpu"
             }
+          },
+          {
+            "name": "rate_interval",
+            "label": "rate interval",
+            "description": "Window of the rate() queries. Shorter = more reactive, noisier.",
+            "type": "custom",
+            "query": "15s,30s,1m,2m,5m",
+            "options": [
+              { "text": "15s", "value": "15s", "selected": false },
+              { "text": "30s", "value": "30s", "selected": true },
+              { "text": "1m", "value": "1m", "selected": false },
+              { "text": "2m", "value": "2m", "selected": false },
+              { "text": "5m", "value": "5m", "selected": false }
+            ],
+            "current": {
+              "text": "30s",
+              "value": "30s"
+            }
           }
         ]
       },
@@ -131,7 +149,7 @@ data:
           "targets": [
             {
               "refId": "A",
-              "expr": "sum(rate(container_cpu_usage_seconds_total{k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\",container!=\"\",container!=\"POD\"}[$__rate_interval]))",
+              "expr": "sum(rate(container_cpu_usage_seconds_total{k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\",container!=\"\",container!=\"POD\"}[$rate_interval]))",
               "legendFormat": "usage",
               "datasource": {
                 "type": "prometheus",
@@ -312,7 +330,7 @@ data:
           "targets": [
             {
               "refId": "A",
-              "expr": "sum by (status) (rate(k6_http_reqs_total{k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\"}[$__rate_interval]))",
+              "expr": "sum by (status) (rate(k6_http_reqs_total{k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\"}[$rate_interval]))",
               "legendFormat": "{{status}}",
               "datasource": {
                 "type": "prometheus",
@@ -364,7 +382,7 @@ data:
           "targets": [
             {
               "refId": "A",
-              "expr": "sum by (scenario) (rate(k6_http_reqs_total{k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\"}[$__rate_interval]))",
+              "expr": "sum by (scenario) (rate(k6_http_reqs_total{k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\"}[$rate_interval]))",
               "legendFormat": "{{scenario}}",
               "datasource": {
                 "type": "prometheus",
@@ -570,7 +588,7 @@ data:
             "type": "prometheus",
             "uid": "${datasource}"
           },
-          "description": "k6 trend stats (worst series across scenarios), pushed every 5s.",
+          "description": "From the k6 native histogram, all scenarios together, over the rate interval.",
           "gridPos": {
             "h": 8,
             "w": 8,
@@ -605,7 +623,7 @@ data:
           "targets": [
             {
               "refId": "A",
-              "expr": "max(k6_http_req_duration_p50{k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\"})",
+              "expr": "histogram_quantile(0.50, sum(rate(k6_http_req_duration_seconds{k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\"}[$rate_interval])))",
               "legendFormat": "p50",
               "datasource": {
                 "type": "prometheus",
@@ -614,7 +632,7 @@ data:
             },
             {
               "refId": "B",
-              "expr": "max(k6_http_req_duration_p90{k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\"})",
+              "expr": "histogram_quantile(0.90, sum(rate(k6_http_req_duration_seconds{k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\"}[$rate_interval])))",
               "legendFormat": "p90",
               "datasource": {
                 "type": "prometheus",
@@ -623,7 +641,7 @@ data:
             },
             {
               "refId": "C",
-              "expr": "max(k6_http_req_duration_p99{k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\"})",
+              "expr": "histogram_quantile(0.99, sum(rate(k6_http_req_duration_seconds{k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\"}[$rate_interval])))",
               "legendFormat": "p99",
               "datasource": {
                 "type": "prometheus",
@@ -675,7 +693,7 @@ data:
           "targets": [
             {
               "refId": "A",
-              "expr": "max by (scenario) (k6_http_req_duration_p99{k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\"})",
+              "expr": "histogram_quantile(0.99, sum by (scenario) (rate(k6_http_req_duration_seconds{k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\"}[$rate_interval])))",
               "legendFormat": "{{scenario}}",
               "datasource": {
                 "type": "prometheus",
@@ -847,7 +865,7 @@ data:
           "targets": [
             {
               "refId": "A",
-              "expr": "sum(rate(container_cpu_usage_seconds_total{k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\",container!=\"\",container!=\"POD\",pod!~\"bench-.*\"}[$__rate_interval])) / sum(kube_pod_container_resource_requests{k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\",resource=\"cpu\",pod!~\"bench-.*\"} and on(namespace, pod) (kube_pod_status_phase{k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\",phase=\"Running\"} == 1))",
+              "expr": "sum(rate(container_cpu_usage_seconds_total{k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\",container!=\"\",container!=\"POD\",pod!~\"bench-.*\"}[$rate_interval])) / sum(kube_pod_container_resource_requests{k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\",resource=\"cpu\",pod!~\"bench-.*\"} and on(namespace, pod) (kube_pod_status_phase{k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\",phase=\"Running\"} == 1))",
               "legendFormat": "CPU",
               "datasource": {
                 "type": "prometheus",
@@ -1144,7 +1162,7 @@ data:
           "targets": [
             {
               "refId": "A",
-              "expr": "sum by (status) (rate(nginxlog_http_response_count_total{k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\"}[$__rate_interval]))",
+              "expr": "sum by (status) (rate(nginxlog_http_response_count_total{k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\"}[$rate_interval]))",
               "legendFormat": "{{status}}",
               "datasource": {
                 "type": "prometheus",
@@ -1489,7 +1507,7 @@ data:
           "targets": [
             {
               "refId": "A",
-              "expr": "sum by (code) (rate(app_backend_requests_total{k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\"}[$__rate_interval]))",
+              "expr": "sum by (code) (rate(app_backend_requests_total{k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\"}[$rate_interval]))",
               "legendFormat": "{{code}}",
               "datasource": {
                 "type": "prometheus",
@@ -1541,7 +1559,7 @@ data:
           "targets": [
             {
               "refId": "A",
-              "expr": "sum by (handler, code) (rate(app_http_requests_total{k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\"}[$__rate_interval]))",
+              "expr": "sum by (handler, code) (rate(app_http_requests_total{k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\"}[$rate_interval]))",
               "legendFormat": "{{handler}} {{code}}",
               "datasource": {
                 "type": "prometheus",
@@ -1861,7 +1879,7 @@ data:
           "targets": [
             {
               "refId": "A",
-              "expr": "sum by (http_response_status_code) (rate(kn_serving_invocation_duration_seconds_count{k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\"}[$__rate_interval]))",
+              "expr": "sum by (http_response_status_code) (rate(kn_serving_invocation_duration_seconds_count{k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\"}[$rate_interval]))",
               "legendFormat": "{{http_response_status_code}}",
               "datasource": {
                 "type": "prometheus",
@@ -1913,7 +1931,7 @@ data:
           "targets": [
             {
               "refId": "A",
-              "expr": "histogram_quantile(0.5, sum by (le) (rate(kn_serving_invocation_duration_seconds_bucket{k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\"}[$__rate_interval])))",
+              "expr": "histogram_quantile(0.5, sum by (le) (rate(kn_serving_invocation_duration_seconds_bucket{k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\"}[$rate_interval])))",
               "legendFormat": "p50",
               "datasource": {
                 "type": "prometheus",
@@ -1922,7 +1940,7 @@ data:
             },
             {
               "refId": "B",
-              "expr": "histogram_quantile(0.9, sum by (le) (rate(kn_serving_invocation_duration_seconds_bucket{k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\"}[$__rate_interval])))",
+              "expr": "histogram_quantile(0.9, sum by (le) (rate(kn_serving_invocation_duration_seconds_bucket{k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\"}[$rate_interval])))",
               "legendFormat": "p90",
               "datasource": {
                 "type": "prometheus",
@@ -1931,7 +1949,7 @@ data:
             },
             {
               "refId": "C",
-              "expr": "histogram_quantile(0.99, sum by (le) (rate(kn_serving_invocation_duration_seconds_bucket{k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\"}[$__rate_interval])))",
+              "expr": "histogram_quantile(0.99, sum by (le) (rate(kn_serving_invocation_duration_seconds_bucket{k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\"}[$rate_interval])))",
               "legendFormat": "p99",
               "datasource": {
                 "type": "prometheus",

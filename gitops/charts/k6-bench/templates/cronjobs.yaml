@@ -31,6 +31,8 @@ spec:
             args:
             - run
             - --no-color
+            # the end-of-test summary keeps every sample in memory (~360 B per request) - results are in Grafana
+            - --no-summary
             - -o
             - experimental-prometheus-rw
             - --tag
@@ -54,8 +56,10 @@ spec:
               value: http://app.$(POD_NAMESPACE).svc.cluster.local
             - name: K6_PROMETHEUS_RW_SERVER_URL
               value: {{ $.Values.prometheusRemoteWriteUrl }}
-            - name: K6_PROMETHEUS_RW_TREND_STATS
-              value: p(50),p(90),p(99),avg,max
+            # trends as native histograms: constant memory (trend stats keep every sample) and
+            # percentiles per time window via histogram_quantile (trend stats are cumulative since start)
+            - name: K6_PROMETHEUS_RW_TREND_AS_NATIVE_HISTOGRAM
+              value: "true"
             - name: K6_PROMETHEUS_RW_PUSH_INTERVAL
               value: 5s
             - name: SCENARIO
@@ -70,6 +74,8 @@ spec:
             - name: {{ upper $name }}_MAX_WAIT
               value: {{ $p.maxWait | quote }}
             {{- end }}
+            - name: GOMEMLIMIT
+              value: {{ $.Values.goMemLimit | quote }}
             resources:
               {{- toYaml $.Values.resources | nindent 14 }}
             volumeMounts:
