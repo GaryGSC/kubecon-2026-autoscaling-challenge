@@ -70,7 +70,9 @@ spec:
             - name: default
               default: true
               relabelings:
-              - targetLabel: k8s_cluster
+              # action spelled out - the CRD defaults it, otherwise Argo CD shows a permanent diff
+              - action: replace
+                targetLabel: k8s_cluster
                 replacement: k3d-autoscaling
             # pick up ServiceMonitors / PodMonitors / rules from any namespace
             serviceMonitorSelectorNilUsesHelmValues: false
