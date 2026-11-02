@@ -1,0 +1,8 @@
+# k6 script mounted by the bench-* CronJobs at /scripts/bench.js (single source: files/bench.js)
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: k6-bench
+data:
+  bench.js: |
+{{ .Files.Get "files/bench.js" | indent 4 }}

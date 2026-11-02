@@ -1,0 +1,32 @@
+# Load profiles. Every CronJob gets all of them as env vars (FAST_VUS, SLOW_MIN_WAIT, ...) and
+# files/bench.js reads them; bench-fast / bench-slow / bench-random run one, bench-all runs all three in parallel.
+# minWait/maxWait (ms): the app sleeps a random time in that range (?minWait=&maxWait=); apps that ignore it just answer.
+scenarios:
+  fast:
+    iterations: 1000
+    vus: 20
+    minWait: 10
+    maxWait: 100
+  slow:
+    iterations: 200
+    vus: 5
+    minWait: 1000
+    maxWait: 2000
+  random:
+    iterations: 300
+    vus: 10
+    minWait: 200
+    maxWait: 1500
+
+image: grafana/k6:2.3.0
+
+# k6 -> Prometheus remote write (kube-prometheus-stack in the monitoring namespace)
+prometheusRemoteWriteUrl: http://kps-kube-prometheus-stack-prometheus.monitoring.svc:9090/api/v1/write
+clusterTag: k3d-autoscaling
+
+resources:
+  requests:
+    cpu: 500m
+    memory: 256Mi
+  limits:
+    memory: 1Gi

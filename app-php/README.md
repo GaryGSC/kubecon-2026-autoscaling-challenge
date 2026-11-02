@@ -2,7 +2,7 @@
 
 Demo app: a Pod with two containers sharing localhost.
 
-- `nginx` (official `nginx:1.29-alpine`, config from the ConfigMap in `rounds/round3/knative-kpa/configmap-nginx.yaml`) listens on :8080 and forwards to php-fpm at 127.0.0.1:9000.
+- `nginx` (official `nginx:1.29-alpine`, config from the ConfigMap in `rounds/round3/configmap-nginx.yaml`) listens on :8080 and forwards to php-fpm at 127.0.0.1:9000.
 - `php-fpm` (this image) runs a static pool of `FPM_WORKERS` workers (default 5).
 
 ## Endpoints

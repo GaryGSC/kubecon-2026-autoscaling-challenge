@@ -1,0 +1,5 @@
+apiVersion: v2
+name: k6-bench
+description: k6 benchmark for the challenge app - suspended CronJobs (run on demand) plus the k6 script
+type: application
+version: 0.1.0

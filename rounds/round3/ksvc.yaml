@@ -1,5 +1,5 @@
 # Round 3, requests-in-flight autoscaling: nginx + php-fpm (two containers) as a Knative Service.
-# kubectl apply -n knative-kpa -f rounds/round3/knative-kpa
+# kubectl apply -n round3 -f rounds/round3
 apiVersion: serving.knative.dev/v1
 kind: Service
 metadata:

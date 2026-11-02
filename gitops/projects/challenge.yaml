@@ -8,7 +8,7 @@ metadata:
     # projects must exist before the Applications that use them
     argocd.argoproj.io/sync-wave: "-2"
 spec:
-  description: challenge project - the round currently deployed in each variant namespace
+  description: challenge project - one app per round, each in its own namespace
   sourceRepos:
   - '*'
   destinations:

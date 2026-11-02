@@ -1,5 +1,5 @@
-# Round 4, requests-in-flight autoscaling: Spring MVC app with slow startup as a Knative Service.
-# kubectl apply -n knative-kpa -f rounds/round4/knative-kpa
+# Round 2, requests-in-flight autoscaling: Go app with 10 workers as a Knative Service.
+# kubectl apply -n round2 -f rounds/round2
 apiVersion: serving.knative.dev/v1
 kind: Service
 metadata:
@@ -16,25 +16,20 @@ spec:
         autoscaling.knative.dev/max-scale: "10"
     spec:
       containers:
-      - name: app
-        image: ghcr.io/depeche-io/kubecon-2026-autoscaling-challenge/app-java:main
+      - image: ghcr.io/depeche-io/kubecon-2026-autoscaling-challenge/app-go:main
         env:
-        - name: TOMCAT_THREADS
+        - name: WORKERS
           value: "10"
-        - name: STARTUP_DELAY_SECONDS
-          value: "30"
         ports:
         - containerPort: 8080
-        # readiness flips only after the simulated warm-up - new Pods take a while to help
         readinessProbe:
           httpGet:
-            path: /readyz
+            path: /healthz
           periodSeconds: 2
         resources:
           requests:
-            cpu: 250m
-            memory: 256Mi
+            cpu: 50m
+            memory: 32Mi
           limits:
-            cpu: 500m
-            memory: 384Mi
-
+            cpu: 200m
+            memory: 64Mi

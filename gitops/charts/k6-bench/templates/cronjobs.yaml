@@ -1,9 +1,12 @@
-# Run on demand: Argo CD UI -> platform-benchmark-<variant> -> bench-fast -> "Create Job"
-# (or: kubectl -n <variant> create job --from=cronjob/bench-fast bench-fast-$(date +%s))
+# One CronJob per scenario: bench-fast, bench-slow, bench-random and bench-all (all three in parallel).
+# Run on demand: Argo CD UI -> the round's app -> bench-<scenario> -> "Create Job"
+# (or: kubectl -n <namespace> create job --from=cronjob/bench-<scenario> bench-<scenario>-$(date +%s))
+{{- range $scenario := list "fast" "slow" "random" "all" }}
+---
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: bench-fast
+  name: bench-{{ $scenario }}
 spec:
   # never fires on its own: suspended, and Feb 29 04:17 is far from any session slot
   schedule: "17 4 29 2 *"
@@ -19,12 +22,12 @@ spec:
         metadata:
           labels:
             app: k6-bench
-            scenario: fast
+            scenario: {{ $scenario }}
         spec:
           restartPolicy: Never
           containers:
           - name: k6
-            image: grafana/k6:2.3.0
+            image: {{ $.Values.image }}
             args:
             - run
             - --no-color
@@ -33,7 +36,7 @@ spec:
             - --tag
             - namespace=$(POD_NAMESPACE)
             - --tag
-            - k8s_cluster=k3d-autoscaling
+            - k8s_cluster={{ $.Values.clusterTag }}
             - --tag
             - testid=$(JOB_NAME)
             - /scripts/bench.js
@@ -46,22 +49,29 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.labels['job-name']
+            # the app of the round runs in the same namespace as this CronJob
             - name: TARGET
               value: http://app.$(POD_NAMESPACE).svc.cluster.local
             - name: K6_PROMETHEUS_RW_SERVER_URL
-              value: http://kps-kube-prometheus-stack-prometheus.monitoring.svc:9090/api/v1/write
+              value: {{ $.Values.prometheusRemoteWriteUrl }}
             - name: K6_PROMETHEUS_RW_TREND_STATS
               value: p(50),p(90),p(99),avg,max
             - name: K6_PROMETHEUS_RW_PUSH_INTERVAL
               value: 5s
             - name: SCENARIO
-              value: fast
+              value: {{ $scenario }}
+            {{- range $name, $p := $.Values.scenarios }}
+            - name: {{ upper $name }}_ITERATIONS
+              value: {{ $p.iterations | quote }}
+            - name: {{ upper $name }}_VUS
+              value: {{ $p.vus | quote }}
+            - name: {{ upper $name }}_MIN_WAIT
+              value: {{ $p.minWait | quote }}
+            - name: {{ upper $name }}_MAX_WAIT
+              value: {{ $p.maxWait | quote }}
+            {{- end }}
             resources:
-              requests:
-                cpu: 500m
-                memory: 256Mi
-              limits:
-                memory: 1Gi
+              {{- toYaml $.Values.resources | nindent 14 }}
             volumeMounts:
             - name: scripts
               mountPath: /scripts
@@ -69,3 +79,4 @@ spec:
           - name: scripts
             configMap:
               name: k6-bench
+{{- end }}

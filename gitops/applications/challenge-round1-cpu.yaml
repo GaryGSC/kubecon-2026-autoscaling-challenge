@@ -1,0 +1,43 @@
+# Round 1, CPU-based: Deployment + HorizontalPodAutoscaler (CPU utilization 80 %).
+# Namespace round1-cpu: the round's manifests (rounds/round1-cpu) plus the k6 benchmark CronJobs (shared Helm chart),
+# so everything for this round is visible in one Argo CD app.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: challenge-round1-cpu
+  namespace: argocd
+spec:
+  project: challenge
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: round1-cpu
+  sources:
+  - repoURL: https://github.com/depeche-io/kubecon-2026-autoscaling-challenge.git
+    path: rounds/round1-cpu
+  # benchmark: bench-fast / bench-slow / bench-random / bench-all CronJobs + the k6-bench ConfigMap
+  - repoURL: https://github.com/depeche-io/kubecon-2026-autoscaling-challenge.git
+    path: gitops/charts/k6-bench
+    helm:
+      releaseName: bench
+      # defaults live in gitops/charts/k6-bench/values.yaml - override per round here, e.g.
+      # valuesObject:
+      #   scenarios:
+      #     fast:
+      #       vus: 50
+  syncPolicy:
+    # no selfHeal: tuning the HPA / Knative annotations live in the Argo CD UI sticks
+    # (the app shows OutOfSync - "Sync" resets it to the round's defaults)
+    automated:
+      prune: true
+      selfHeal: false
+    syncOptions:
+    - CreateNamespace=true
+    - ServerSideApply=true
+    # CRDs from other apps (ServiceMonitor, PodMonitor, Knative, Istio) may not exist yet - skip the dry run, retry applies later
+    - SkipDryRunOnMissingResource=true
+    retry:
+      limit: 5
+      backoff:
+        duration: 10s
+        factor: 2
+        maxDuration: 1m

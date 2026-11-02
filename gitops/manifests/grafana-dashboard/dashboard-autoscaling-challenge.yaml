@@ -64,11 +64,12 @@ data:
               "refId": "A"
             },
             "definition": "label_values(kube_pod_info{k8s_cluster=\"$k8s_cluster\"}, namespace)",
+            "regex": "/^round.*/",
             "refresh": 2,
             "sort": 1,
             "current": {
-              "text": "cpu-hpa",
-              "value": "cpu-hpa"
+              "text": "round1-cpu",
+              "value": "round1-cpu"
             }
           }
         ]
@@ -1551,7 +1552,7 @@ data:
         },
         {
           "type": "row",
-          "title": "Knative (knative-kpa namespace)",
+          "title": "Knative (Knative rounds only)",
           "collapsed": false,
           "id": 27,
           "gridPos": {

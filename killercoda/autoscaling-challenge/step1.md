@@ -6,15 +6,11 @@ Open the UIs (credentials are public for the tutorial: `admin` / `@utoSc4ling`):
 - [Grafana]({{TRAFFIC_HOST1_30030}}) - dashboard **Autoscaling Reality Check**
 - [Prometheus]({{TRAFFIC_HOST1_30090}})
 
-Deploy round 1 in both variants:
+All rounds are deployed by Argo CD, one app and namespace each: `challenge-round1-cpu`, `challenge-round1-in-flight`,
+`challenge-round2` ... `challenge-round6`.
+
+Run a benchmark: Argo CD -> `challenge-round1-cpu` -> CronJob `bench-all` -> **Create Job**, or:
 
 ```
-kubectl apply -n cpu-hpa -f rounds/round1/cpu-hpa
-kubectl apply -n knative-kpa -f rounds/round1/knative-kpa
-```{{exec}}
-
-Run a benchmark: Argo CD -> `platform-benchmark-cpu-hpa` -> `bench-all` -> **Create Job**, or:
-
-```
-kubectl -n cpu-hpa create job --from=cronjob/bench-all bench-all-$(date +%s)
+kubectl -n round1-cpu create job --from=cronjob/bench-all bench-all-$(date +%s)
 ```{{exec}}

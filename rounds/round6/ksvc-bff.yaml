@@ -1,5 +1,5 @@
-# Round 2, requests-in-flight autoscaling: Go app with 10 workers as a Knative Service.
-# kubectl apply -n knative-kpa -f rounds/round2/knative-kpa
+# Round 6, requests-in-flight autoscaling: BFF (ksvc "app") -> backend (ksvc "backend").
+# kubectl apply -n round6 -f rounds/round6
 apiVersion: serving.knative.dev/v1
 kind: Service
 metadata:
@@ -20,6 +20,15 @@ spec:
         env:
         - name: WORKERS
           value: "10"
+        - name: MODE
+          value: bff
+        - name: BACKEND_URL
+          value: http://backend.round6.svc.cluster.local
+        # defaults when k6 sends no ?timeout= / ?backend_timeout= - keep BFF > backend
+        - name: TIMEOUT_MS
+          value: "3000"
+        - name: BACKEND_TIMEOUT_MS
+          value: "2500"
         ports:
         - containerPort: 8080
         readinessProbe:

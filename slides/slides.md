@@ -106,9 +106,10 @@ How fast can your Pods <em>really</em> scale when the traffic hits?
 ## You get
 
 - a pre-configured cluster (Pod-level autoscaling only)
-- round 1 in two variants, rounds 2-6 as Knative only:
-  - <span class="kcd-pill">cpu-hpa</span> Deployment + **CPU HPA** (round 1)
-  - <span class="kcd-pill">knative-kpa</span> Knative **requests-in-flight** (all rounds)
+- every round in its own namespace + Argo CD app, all running side by side:
+  - <span class="kcd-pill">round1-cpu</span> Deployment + **CPU HPA**
+  - <span class="kcd-pill">round1-in-flight</span> Knative **requests-in-flight**
+  - <span class="kcd-pill">round2</span> … <span class="kcd-pill">round6</span> Knative
 - a 4-minute mixed benchmark (k6)
 - one Grafana dashboard
 
@@ -199,10 +200,11 @@ Argo CD (plain `Application` manifests), everything single-instance:
 gitops/
 ├── bootstrap/          # Argo CD itself
 ├── projects/           # AppProjects
-├── applications/       # one Application per file
-└── manifests/          # plain YAML (Knative, benchmark, dashboard)
-rounds/round1/{cpu-hpa,knative-kpa}
-rounds/round2..6/knative-kpa
+├── applications/       # one Application per round
+├── charts/k6-bench/    # benchmark CronJobs (Helm), in every round's app
+└── manifests/          # plain YAML (Knative, dashboard)
+rounds/round1-cpu  rounds/round1-in-flight
+rounds/round2 … rounds/round6
 ```
 
 </div>
@@ -222,10 +224,10 @@ rounds/round2..6/knative-kpa
 
 <div class="mt-6">
 
-Run it from **Argo CD** → `platform-benchmark-<variant>` → `bench-all` → **Create Job**
+Run it from **Argo CD** → the round's app (`challenge-<round>`) → `bench-all` → **Create Job**
 
 ```bash
-kubectl -n cpu-hpa create job --from=cronjob/bench-all bench-all-$(date +%s)
+kubectl -n round1-cpu create job --from=cronjob/bench-all bench-all-$(date +%s)
 ```
 
 </div>
@@ -265,10 +267,7 @@ Good autoscaling = <strong>users don't notice</strong> and you <strong>don't pay
 
 # Round 1 — nginx, static page
 
-```bash
-kubectl apply -n cpu-hpa -f rounds/round1/cpu-hpa
-kubectl apply -n knative-kpa -f rounds/round1/knative-kpa
-```
+Argo CD apps `challenge-round1-cpu` and `challenge-round1-in-flight` (`rounds/round1-cpu`, `rounds/round1-in-flight`)
 
 - nginx serves the same page for any `?minWait=&maxWait=` — the benchmark's waits are ignored
 - CPU HPA at 80 %, Knative target 10 requests in flight
@@ -393,7 +392,7 @@ Scale the wrong tier and you just move the queue.
 
 <div>
 
-**HPA** (round 1, cpu-hpa)
+**HPA** (round1-cpu)
 
 - `metrics[].target.averageUtilization`
 - `minReplicas` / `maxReplicas`

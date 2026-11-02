@@ -21,20 +21,6 @@ spec:
     kind: Application
     jsonPointers:
     - /status
-  # attendees switch rounds in the Argo CD UI (App Details -> Edit -> Path) -
-  # don't let root revert that
-  - group: argoproj.io
-    kind: Application
-    name: challenge-cpu-hpa
-    jsonPointers:
-    - /spec/source/path
-    - /spec/source/targetRevision
-  - group: argoproj.io
-    kind: Application
-    name: challenge-knative-kpa
-    jsonPointers:
-    - /spec/source/path
-    - /spec/source/targetRevision
   syncPolicy:
     automated:
       allowEmpty: true
@@ -42,4 +28,3 @@ spec:
       selfHeal: true
     syncOptions:
     - allowEmpty=true
-    - RespectIgnoreDifferences=true
