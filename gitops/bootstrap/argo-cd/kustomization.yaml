@@ -17,6 +17,9 @@ configMapGenerator:
   literals:
   # plain HTTP, so NodePort / Codespaces / Killercoda port forwarding just works
   - server.insecure=true
+  # diff against what the API server would store (CRD defaults, Knative webhook mutations) -
+  # avoids permanent OutOfSync on fields we don't spell out
+  - controller.diff.server.side=true
 
 patches:
 # public tutorial credentials: admin / @utoSc4ling
