@@ -7647,6 +7647,10 @@ data:
   # This is the Go import path for the binary that is containerized
   # and substituted here.
   queue-sidecar-image: gcr.io/knative-releases/knative.dev/serving/cmd/queue@sha256:acbd28666cc7eef7f9a3ed2495fb6d9e8fac1180b35a9f22246e3bb69c87a891
+  # challenge: queue-proxy proxies every request - measured ~5-70m / ~19Mi per Pod under the k6 benchmark
+  # (up to ~440m in the nginx rounds, which answer instantly); the 25m default made CPU efficiency read 300-600 %
+  queue-sidecar-cpu-request: "50m"
+  queue-sidecar-memory-request: "32Mi"
   _example: |-
     ################################
     #                              #

@@ -55,7 +55,7 @@ spec:
         args: ["--nginx.scrape-uri=http://127.0.0.1:8080/stub_status"]
         resources:
           requests:
-            cpu: 10m
+            cpu: 5m
             memory: 16Mi
           limits:
             memory: 32Mi
@@ -64,7 +64,7 @@ spec:
         args: ["-config-file", "/etc/nginxlog/nginxlog-exporter.hcl"]
         resources:
           requests:
-            cpu: 10m
+            cpu: 25m
             memory: 16Mi
           limits:
             memory: 64Mi
@@ -79,7 +79,7 @@ spec:
         args: ["server", "--phpfpm.scrape-uri", "tcp://127.0.0.1:9000/fpm-status"]
         resources:
           requests:
-            cpu: 10m
+            cpu: 5m
             memory: 16Mi
           limits:
             memory: 32Mi
