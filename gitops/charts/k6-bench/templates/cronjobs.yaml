@@ -1,7 +1,7 @@
-# One CronJob per scenario: bench-fast, bench-slow, bench-random and bench-all (all three one after another).
+# One CronJob per scenario: bench-fast, bench-slow, bench-medium and bench-all (all three one after another).
 # Run on demand: Argo CD UI -> the round's app -> bench-<scenario> -> "Create Job"
 # (or: kubectl -n <namespace> create job --from=cronjob/bench-<scenario> bench-<scenario>-$(date +%s))
-{{- range $scenario := list "fast" "slow" "random" "all" }}
+{{- range $scenario := list "fast" "slow" "medium" "all" }}
 ---
 apiVersion: batch/v1
 kind: CronJob

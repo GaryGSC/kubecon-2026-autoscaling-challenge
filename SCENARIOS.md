@@ -21,7 +21,7 @@ Each Argo CD app shows the round's manifests (`rounds/<namespace>`) and its benc
 1. **Pick the round** - open its Argo CD app (table above); nothing to switch or deploy.
 2. **Tune** - open the autoscaling resource (links per round below) -> *Live manifest* -> *Edit*.
    Self-heal is off for the challenge apps, so your change sticks; the app shows *OutOfSync*, *Sync* resets the round to its defaults.
-3. **Benchmark** - in the same app: CronJob `bench-all` (or `bench-fast` / `bench-slow` / `bench-random`) -> *...* -> **Create Job**. Run them one at a time.
+3. **Benchmark** - in the same app: CronJob `bench-all` (or `bench-fast` / `bench-slow` / `bench-medium`) -> *...* -> **Create Job**. Run them one at a time.
 4. **Read the result** - Grafana dashboard *Autoscaling Reality Check*, `namespace` = the round's namespace, e.g.
    [round1-cpu](http://localhost:30030/d/autoscaling-challenge?var-namespace=round1-cpu) /
    [round1-in-flight](http://localhost:30030/d/autoscaling-challenge?var-namespace=round1-in-flight) /
@@ -37,8 +37,8 @@ All scenarios call `http://app.<namespace>/?minWait=<min>&maxWait=<max>` (k6 `co
 |---|---:|---:|---|
 | `fast` | 90 s | 20 | 10 - 100 |
 | `slow` | 90 s | 5 | 1000 - 2000 |
-| `random` | 90 s | 10 | 200 - 1500 |
-| `all` | the three above one after another (fast, slow, random) = 270 s | 20 / 5 / 10 | mixed |
+| `medium` | 90 s | 10 | 200 - 1500 |
+| `all` | the three above one after another (fast, slow, medium) = 270 s | 20 / 5 / 10 | mixed |
 
 The profiles are values of the Helm chart (`gitops/charts/k6-bench/values.yaml`; override per round in the Application's `helm.valuesObject`).
 
