@@ -5,7 +5,7 @@ kind: Deployment
 metadata:
   name: app
 spec:
-  replicas: 1
+  # no replicas: the HPA owns them (minReplicas 1) - setting it here makes every Argo CD sync reset the scale
   selector:
     matchLabels:
       app: app
