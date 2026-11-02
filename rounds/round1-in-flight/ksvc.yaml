@@ -12,6 +12,8 @@ spec:
         autoscaling.knative.dev/metric: concurrency
         # requests in flight per Pod the autoscaler aims for
         autoscaling.knative.dev/target: "10"
+        # stable window the concurrency is averaged over (default 60s); panic window = 10 % of it
+        autoscaling.knative.dev/window: "30s"
         autoscaling.knative.dev/min-scale: "1"
         autoscaling.knative.dev/max-scale: "10"
     spec:
