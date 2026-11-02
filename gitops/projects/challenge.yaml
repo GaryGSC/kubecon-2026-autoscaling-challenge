@@ -1,90 +1,22 @@
 apiVersion: argoproj.io/v1alpha1
 kind: AppProject
 metadata:
-  annotations:
-    argocd-autopilot.argoproj-labs.io/default-dest-server: https://kubernetes.default.svc
-    argocd.argoproj.io/sync-options: PruneLast=true
-    argocd.argoproj.io/sync-wave: "-2"
-  creationTimestamp: null
   name: challenge
   namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-options: PruneLast=true
+    # projects must exist before the Applications that use them
+    argocd.argoproj.io/sync-wave: "-2"
 spec:
+  description: challenge project - the round currently deployed in each variant namespace
+  sourceRepos:
+  - '*'
+  destinations:
+  - server: '*'
+    namespace: '*'
   clusterResourceWhitelist:
   - group: '*'
     kind: '*'
-  description: challenge project - the round currently deployed in each variant namespace
-  destinations:
-  - namespace: '*'
-    server: '*'
   namespaceResourceWhitelist:
   - group: '*'
     kind: '*'
-  sourceRepos:
-  - '*'
-status: {}
----
-apiVersion: argoproj.io/v1alpha1
-kind: ApplicationSet
-metadata:
-  annotations:
-    argocd.argoproj.io/sync-wave: "0"
-  creationTimestamp: null
-  name: challenge
-  namespace: argocd
-spec:
-  generators:
-  - git:
-      files:
-      - path: gitops/apps/**/challenge/config.json
-      repoURL: https://github.com/depeche-io/kubecon-2026-autoscaling-challenge.git
-      requeueAfterSeconds: 20
-      revision: ""
-      template:
-        metadata: {}
-        spec:
-          destination: {}
-          project: ""
-  # attendees switch rounds in the Argo CD UI (App Details -> Edit -> Path) -
-  # don't let the ApplicationSet revert that
-  ignoreApplicationDifferences:
-  - jsonPointers:
-    - /spec/source/path
-    - /spec/source/targetRevision
-  syncPolicy: {}
-  template:
-    metadata:
-      labels:
-        app.kubernetes.io/managed-by: argocd-autopilot
-        app.kubernetes.io/name: '{{ appName }}'
-      name: challenge-{{ userGivenName }}
-      namespace: argocd
-    spec:
-      destination:
-        namespace: '{{ destNamespace }}'
-        server: '{{ destServer }}'
-      ignoreDifferences:
-      - group: argoproj.io
-        jsonPointers:
-        - /status
-        kind: Application
-      project: challenge
-      source:
-        path: '{{ srcPath }}'
-        repoURL: '{{ srcRepoURL }}'
-        targetRevision: '{{ srcTargetRevision }}'
-      syncPolicy:
-        # no selfHeal: tuning the HPA / Knative annotations live in the Argo CD UI sticks
-        # (the app shows OutOfSync - "Sync" resets it to the round's defaults)
-        automated:
-          prune: true
-          selfHeal: false
-        syncOptions:
-        - CreateNamespace=true
-        - ServerSideApply=true
-        retry:
-          limit: 5
-          backoff:
-            duration: 10s
-            factor: 2
-            maxDuration: 1m
-status: {}

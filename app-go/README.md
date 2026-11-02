@@ -1,19 +1,19 @@
 # autoscaling demo app
 
-Tiny HTTP server with a fixed worker pool. Each request sleeps `ms` milliseconds
+Tiny HTTP server with a fixed worker pool. Each request sleeps a random time in `[minWait, maxWait]` milliseconds
 (I/O-like wait, no CPU). Only `WORKERS` requests run at once; the rest queue.
 Throughput is capped while CPU stays near zero, so CPU-based HPA won't notice.
 
 Env: `PORT` (default 8080), `WORKERS` (default 10), `BACKEND_URL` (default `http://backend`, used by `/bff`),
-`MODE=bff` (serve the BFF on `/` too - the k6 benchmark always calls `/?ms=`),
+`MODE=bff` (serve the BFF on `/` too - the k6 benchmark always calls `/?minWait=&maxWait=`),
 `TIMEOUT_MS` / `BACKEND_TIMEOUT_MS` (defaults for `?timeout=` / `?backend_timeout=` when the request has none; 0 = no timeout).
 
 Endpoints:
 
-- `/?ms=N&timeout=T`: sleeps N ms (clamped 0..30000) on a worker. `timeout` (ms, 0/missing = none)
+- `/?minWait=A&maxWait=B&timeout=T`: sleeps a random int in [A, B] ms (each clamped 0..30000, invalid/missing -> 0, B < A -> B = A) on a worker. `timeout` (ms, 0/missing = none)
   covers queue wait + work; on expiry the worker is released and the answer is `504 timeout after Tms`.
-- `/bff?ms=N&timeout=T&backend_timeout=BT`: takes a worker from the same pool and holds it while calling
-  `${BACKEND_URL}/?ms=N&timeout=BT` (a BFF thread blocked on I/O). `timeout` = BFF deadline (queue wait + backend call).
+- `/bff?minWait=A&maxWait=B&timeout=T&backend_timeout=BT`: takes a worker from the same pool and holds it while calling
+  `${BACKEND_URL}/?minWait=N&maxWait=N&timeout=BT` (N = the wait already picked by the BFF) (a BFF thread blocked on I/O). `timeout` = BFF deadline (queue wait + backend call).
 - `/healthz`, `/metrics`.
 
 ```
@@ -52,7 +52,7 @@ not CPU). Scaling the BFF alone just moves the queue to the backend.
 
 ```sh
 go run .
-curl 'localhost:8080/?ms=200'
+curl 'localhost:8080/?minWait=100&maxWait=300'
 curl localhost:8080/healthz
 curl -s localhost:8080/metrics | grep ^app_
 ```

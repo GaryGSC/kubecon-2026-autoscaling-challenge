@@ -1,27 +1,40 @@
+# App of apps: syncs the AppProjects and every Application (one file each in gitops/applications).
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  creationTimestamp: null
-  finalizers:
-  - resources-finalizer.argocd.argoproj.io
-  labels:
-    app.kubernetes.io/managed-by: argocd-autopilot
-    app.kubernetes.io/name: root
   name: root
   namespace: argocd
+  finalizers:
+  - resources-finalizer.argocd.argoproj.io
 spec:
+  project: default
   destination:
-    namespace: argocd
     server: https://kubernetes.default.svc
+    namespace: argocd
+  sources:
+  - repoURL: https://github.com/depeche-io/kubecon-2026-autoscaling-challenge.git
+    path: gitops/projects
+  - repoURL: https://github.com/depeche-io/kubecon-2026-autoscaling-challenge.git
+    path: gitops/applications
   ignoreDifferences:
   - group: argoproj.io
+    kind: Application
     jsonPointers:
     - /status
+  # attendees switch rounds in the Argo CD UI (App Details -> Edit -> Path) -
+  # don't let root revert that
+  - group: argoproj.io
     kind: Application
-  project: default
-  source:
-    path: gitops/projects
-    repoURL: https://github.com/depeche-io/kubecon-2026-autoscaling-challenge.git
+    name: challenge-cpu-hpa
+    jsonPointers:
+    - /spec/source/path
+    - /spec/source/targetRevision
+  - group: argoproj.io
+    kind: Application
+    name: challenge-knative-kpa
+    jsonPointers:
+    - /spec/source/path
+    - /spec/source/targetRevision
   syncPolicy:
     automated:
       allowEmpty: true
@@ -29,3 +42,4 @@ spec:
       selfHeal: true
     syncOptions:
     - allowEmpty=true
+    - RespectIgnoreDifferences=true

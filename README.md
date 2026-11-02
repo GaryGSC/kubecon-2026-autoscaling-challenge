@@ -18,7 +18,7 @@ until the efficiency is no longer terrible. Node-level autoscaling is out of sco
 
 ## Get a cluster
 
-All three options run the same k3d cluster and the same bootstrap (`scripts/up.sh`, 5-10 minutes).
+All three options run the same k3d cluster and the same bootstrap (`bin/up.sh`, 5-10 minutes).
 
 ### Local k3d
 
@@ -27,8 +27,8 @@ Requirements: Docker with ~4 CPUs / 8 GB RAM free, [k3d](https://k3d.io) v5.9+, 
 ```bash
 git clone https://github.com/depeche-io/kubecon-2026-autoscaling-challenge.git
 cd kubecon-2026-autoscaling-challenge
-./scripts/up.sh      # creates k3d cluster "autoscaling" and switches kubectl to it
-./scripts/down.sh    # deletes it
+./bin/up.sh      # creates k3d cluster "autoscaling" and switches kubectl to it
+./bin/down.sh    # deletes it
 ```
 
 `up.sh` itself only talks to the `k3d-autoscaling` context.
@@ -36,7 +36,7 @@ cd kubecon-2026-autoscaling-challenge
 ### GitHub Codespaces
 
 *Code* -> *Codespaces* -> *Create codespace on main*. The dev container (4 cores / 16 GB) installs the tools
-(`scripts/install-tools.sh`) and runs `up.sh` on start; ports 30080 / 30030 / 30090 are forwarded.
+(`bin/install-tools.sh`) and runs `up.sh` on start; ports 30080 / 30030 / 30090 are forwarded.
 
 ### Killercoda
 
@@ -46,39 +46,38 @@ background). Killercoda environments are small - fine to follow along, tight for
 ## What's inside
 
 ```text
-gitops/                 # Argo CD, argocd-autopilot layout (autopilot v0.4.20, Argo CD v3.5.6)
-├── bootstrap/          #   Argo CD itself (non-HA, NodePort 30080, admin password)
-├── projects/
-│   ├── platform.yaml   #   ApplicationSet: istio, knative-serving, kube-prometheus-stack, benchmark-*
-│   └── challenge.yaml  #   ApplicationSet: challenge-cpu-hpa, challenge-knative-kpa (no self-heal)
-└── apps/
-    ├── istio/                  # Istio 1.29.10 (base, istiod, ingress gateway), single replica
-    ├── knative-serving/        # Knative Serving + net-istio v1.24.0, HA HPAs/PDBs removed, metrics on
-    ├── kube-prometheus-stack/  # 92.17.0, no Alertmanager, 5s scrapes, k6 remote write, dashboard
-    ├── benchmark/base/         # k6 script + 4 suspended CronJobs (fast, slow, random, all)
-    ├── benchmark-cpu-hpa/      # ... deployed into the cpu-hpa namespace
-    ├── benchmark-knative-kpa/  # ... deployed into the knative-kpa namespace
-    ├── cpu-hpa/                # challenge app -> rounds/roundN/cpu-hpa
-    └── knative-kpa/            # challenge app -> rounds/roundN/knative-kpa
-rounds/round1..6/{cpu-hpa,knative-kpa}   # the workloads per round and variant
+gitops/                 # Argo CD (v3.5.6) - plain Application manifests, Kustomize only for Argo CD's own install
+├── bootstrap/          #   Argo CD itself (Kustomize, non-HA, NodePort 30080, admin password) + root app of apps
+├── projects/           #   AppProjects: platform, challenge
+├── applications/       #   one Application per file, synced by the root app
+│   ├── platform-istio.yaml                  # Istio 1.29.10 (base, istiod, ingress gateway), single replica
+│   ├── platform-knative-serving.yaml        # Knative Serving + net-istio v1.24.0
+│   ├── platform-kube-prometheus-stack.yaml  # 92.17.0, no Alertmanager, 5s scrapes, k6 remote write, dashboard
+│   ├── platform-benchmark-cpu-hpa.yaml      # k6 CronJobs deployed into the cpu-hpa namespace
+│   ├── platform-benchmark-knative-kpa.yaml  # ... and into the knative-kpa namespace
+│   ├── challenge-cpu-hpa.yaml               # challenge app -> rounds/round1/cpu-hpa
+│   └── challenge-knative-kpa.yaml           # challenge app -> rounds/roundN/knative-kpa
+└── manifests/          #   plain YAML used by the Applications
+    ├── knative-serving/    # vendored upstream YAML (HA HPAs/PDBs removed, metrics on) + ServiceMonitors
+    ├── benchmark/          # k6 script (ConfigMap) + 4 suspended CronJobs (fast, slow, random, all)
+    └── grafana-dashboard/  # the dashboard ConfigMap
+rounds/round1/{cpu-hpa,knative-kpa}      # round 1 in both variants
+rounds/round2..6/knative-kpa             # rounds 2-6 only as Knative (plain YAML, no Kustomize)
 app-go/  app-php/  app-java/             # demo apps (images built by .github/workflows, linux/amd64 + arm64)
-k3d/cluster.yaml  scripts/  .devcontainer/  killercoda/  slides/
+k3d/cluster.yaml  bin/  .devcontainer/  killercoda/  slides/
 ```
 
 Everything runs single-instance (no HA) to leave the most CPU for the tutorial workloads.
 
-### Bootstrapping with argocd-autopilot
+### How GitOps is wired
 
-`up.sh` applies `gitops/bootstrap` directly, which is what `argocd-autopilot repo bootstrap --recover` does - without
-needing a git token for this public repo. With your own fork and token you can use the CLI instead
-(replace the repo URL inside `gitops/` with your fork first):
+`up.sh` installs Argo CD (`kubectl apply -k gitops/bootstrap/argo-cd` - the only Kustomize in the repo) and applies
+`gitops/bootstrap/{argo-cd,root,cluster-resources}.yaml`. The `root` Application then syncs `gitops/projects` and
+`gitops/applications`, so a new app is just another `kind: Application` file in `gitops/applications`. Plain YAML
+the apps deploy lives in `gitops/manifests`; third-party Helm charts are referenced directly in the Application
+(`chart` + `helm.valuesObject`). With a fork, replace the repo URL in `gitops/` first.
 
-```bash
-argocd-autopilot repo bootstrap --recover \
-  --repo https://github.com/<you>/kubecon-2026-autoscaling-challenge.git/gitops --git-token <token>
-```
-
-New platform apps follow the autopilot layout: `gitops/apps/<app>/overlays/<project>/config.json`.
+The rounds are plain YAML too: apply one by hand with `kubectl apply -n <namespace> -f rounds/roundN/<variant>`.
 
 ## Container images
 
@@ -100,9 +99,10 @@ The repo was built in one working session, starting from the session abstract:
 - **Format** - a KubeCon Tutorial (80 min, hands-on on attendees' laptops). Conference Wi-Fi is unreliable, so
   everything runs locally on a single-node k3d cluster; Codespaces and Killercoda are fallbacks running the same
   `up.sh`. Shared-cloud options (EKS / GKE / OKE, ~$200-475 for a 512 vCPU day) were considered and dropped.
-- **Scope** - Pod-level autoscaling only, no node autoscaling. Two variants side by side: CPU-based HPA
-  (`cpu-hpa`) vs. Knative requests-in-flight (`knative-kpa`), each in its own namespace with its own benchmark.
-- **Platform** - Argo CD in argocd-autopilot layout, Istio + Knative, kube-prometheus-stack (no Alertmanager,
+- **Scope** - Pod-level autoscaling only, no node autoscaling. Round 1 in two variants side by side: CPU-based HPA
+  (`cpu-hpa`) vs. Knative requests-in-flight (`knative-kpa`), each in its own namespace with its own benchmark;
+  rounds 2-6 only as `knative-kpa`.
+- **Platform** - Argo CD with plain `Application` manifests, Istio + Knative, kube-prometheus-stack (no Alertmanager,
   5s scrapes for dense data). Everything single-instance to leave the CPU to the workloads. Public credentials.
 - **Benchmark** - k6 with three scenarios (fast 1000 x 20, slow 200 x 5, random 300 x 10) plus `all`, as
   suspended CronJobs started from the Argo CD UI - no extra UI. Results go to Prometheus via remote write.

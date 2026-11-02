@@ -1,3 +1,5 @@
+# Round 6, requests-in-flight autoscaling: BFF (ksvc "app") -> backend (ksvc "backend").
+# kubectl apply -n knative-kpa -f rounds/round6/knative-kpa
 apiVersion: serving.knative.dev/v1
 kind: Service
 metadata:

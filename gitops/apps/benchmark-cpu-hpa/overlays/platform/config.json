@@ -1,1 +1,0 @@
-{"appName":"benchmark-cpu-hpa","userGivenName":"benchmark-cpu-hpa","destNamespace":"cpu-hpa","destServer":"https://kubernetes.default.svc","srcPath":"gitops/apps/benchmark-cpu-hpa/overlays/platform","srcRepoURL":"https://github.com/depeche-io/kubecon-2026-autoscaling-challenge.git","srcTargetRevision":"","labels":null,"annotations":null}

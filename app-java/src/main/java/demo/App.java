@@ -1,5 +1,7 @@
 package demo;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,16 +16,22 @@ public class App {
         SpringApplication.run(App.class, args);
     }
 
-    /** Holds a Tomcat worker thread for ms milliseconds (waiting, not CPU). */
+    /** Holds a Tomcat worker thread for a random time in [minWait, maxWait] ms (waiting, not CPU). */
     @GetMapping("/")
-    public String wait(@RequestParam(required = false) String ms) throws InterruptedException {
-        int n;
-        try {
-            n = Math.max(0, Math.min(30000, Integer.parseInt(ms)));
-        } catch (NumberFormatException e) {
-            n = 0;
-        }
+    public String wait(@RequestParam(required = false) String minWait,
+                       @RequestParam(required = false) String maxWait) throws InterruptedException {
+        int min = parse(minWait);
+        int max = Math.max(min, parse(maxWait));
+        int n = ThreadLocalRandom.current().nextInt(min, max + 1);
         Thread.sleep(n);
         return "waited " + n + "ms (thread " + Thread.currentThread().getName() + ")\n";
+    }
+
+    private static int parse(String s) {
+        try {
+            return Math.max(0, Math.min(30000, Integer.parseInt(s)));
+        } catch (NumberFormatException e) {
+            return 0;
+        }
     }
 }

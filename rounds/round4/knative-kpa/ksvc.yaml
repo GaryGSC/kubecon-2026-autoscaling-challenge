@@ -1,3 +1,5 @@
+# Round 4, requests-in-flight autoscaling: Spring MVC app with slow startup as a Knative Service.
+# kubectl apply -n knative-kpa -f rounds/round4/knative-kpa
 apiVersion: serving.knative.dev/v1
 kind: Service
 metadata:

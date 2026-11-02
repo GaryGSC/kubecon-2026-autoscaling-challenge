@@ -1,3 +1,5 @@
+# Round 1, CPU-based autoscaling: nginx + HPA on CPU utilization.
+# kubectl apply -n cpu-hpa -f rounds/round1/cpu-hpa
 apiVersion: apps/v1
 kind: Deployment
 metadata:

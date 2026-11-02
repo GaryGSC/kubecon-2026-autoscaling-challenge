@@ -1,1 +1,0 @@
-{"appName":"knative-serving","userGivenName":"knative-serving","destNamespace":"knative-serving","destServer":"https://kubernetes.default.svc","srcPath":"gitops/apps/knative-serving/overlays/platform","srcRepoURL":"https://github.com/depeche-io/kubecon-2026-autoscaling-challenge.git","srcTargetRevision":"","labels":null,"annotations":null}

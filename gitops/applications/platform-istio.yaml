@@ -1,0 +1,83 @@
+# Istio 1.29 is the version tested by Knative net-istio v1.24.0.
+# Single instance everywhere - no HPA, 1 replica - leave the CPU to the tutorial workloads.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: platform-istio
+  namespace: argocd
+spec:
+  project: platform
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: istio-system
+  sources:
+  - repoURL: https://istio-release.storage.googleapis.com/charts
+    chart: base
+    targetRevision: 1.29.10
+    helm:
+      releaseName: istio-base
+      # the chart's CRDs are installed by Argo CD
+      valuesObject:
+        defaultRevision: default
+  - repoURL: https://istio-release.storage.googleapis.com/charts
+    chart: istiod
+    targetRevision: 1.29.10
+    helm:
+      releaseName: istiod
+      valuesObject:
+        autoscaleEnabled: false
+        replicaCount: 1
+        resources:
+          requests:
+            cpu: 50m
+            memory: 256Mi
+  - repoURL: https://istio-release.storage.googleapis.com/charts
+    chart: gateway
+    targetRevision: 1.29.10
+    helm:
+      # net-istio expects the "istio: ingressgateway" selector the chart derives from this name
+      releaseName: istio-ingressgateway
+      valuesObject:
+        autoscaling:
+          enabled: false
+        replicaCount: 1
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: "2"
+            memory: 1Gi
+        # the gateway pod is injected by istiod - create it only after istiod is healthy
+        # (the chart puts these annotations on every gateway resource)
+        annotations:
+          argocd.argoproj.io/sync-wave: "1"
+  ignoreDifferences:
+  # istiod and the Knative webhooks inject their own CA bundles / failure policies
+  - group: admissionregistration.k8s.io
+    kind: ValidatingWebhookConfiguration
+    jqPathExpressions:
+    - .webhooks[]?.clientConfig.caBundle
+    - .webhooks[]?.failurePolicy
+    - .webhooks[]?.rules
+  - group: admissionregistration.k8s.io
+    kind: MutatingWebhookConfiguration
+    jqPathExpressions:
+    - .webhooks[]?.clientConfig.caBundle
+    - .webhooks[]?.rules
+  syncPolicy:
+    automated:
+      allowEmpty: true
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true
+    - ServerSideApply=true
+    - RespectIgnoreDifferences=true
+    # retry on transient failures (CRDs, istiod webhooks not ready yet)
+    retry:
+      limit: 20
+      backoff:
+        duration: 10s
+        factor: 2
+        maxDuration: 2m

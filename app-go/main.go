@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"math/rand/v2"
 	"net/http"
 	"os"
 	"os/signal"
@@ -50,13 +51,16 @@ func envInt(key string, def int) int {
 	return def
 }
 
-// handle wraps a job with the shared worker pool: ?ms=N, ?timeout=T (queue wait + job).
+// handle wraps a job with the shared worker pool: ?minWait=A&maxWait=B (random wait in [A,B]), ?timeout=T (queue wait + job).
 func handle(name string, sem chan struct{}, job func(ctx context.Context, r *http.Request, ms int, wait time.Duration) (int, string)) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		start := time.Now()
 		q := r.URL.Query()
-		ms, _ := strconv.Atoi(q.Get("ms"))
-		ms = max(0, min(ms, 30000))
+		minWait, _ := strconv.Atoi(q.Get("minWait"))
+		maxWait, _ := strconv.Atoi(q.Get("maxWait"))
+		minWait = max(0, min(minWait, 30000))
+		maxWait = max(minWait, min(maxWait, 30000))
+		ms := minWait + rand.IntN(maxWait-minWait+1)
 		timeout, err := strconv.Atoi(q.Get("timeout"))
 		if err != nil {
 			timeout = defaultTimeout
@@ -111,7 +115,7 @@ func sleepJob(ctx context.Context, _ *http.Request, ms int, wait time.Duration) 
 
 // bffJob holds its worker while blocked on the backend (like a thread waiting on I/O).
 func bffJob(ctx context.Context, r *http.Request, ms int, _ time.Duration) (int, string) {
-	url := fmt.Sprintf("%s/?ms=%d", backendURL, ms)
+	url := fmt.Sprintf("%s/?minWait=%d&maxWait=%d", backendURL, ms, ms)
 	bt, err := strconv.Atoi(r.URL.Query().Get("backend_timeout"))
 	if err != nil {
 		bt = defaultBackendTimeout
@@ -161,7 +165,7 @@ func main() {
 	sem := make(chan struct{}, workers) // one pool shared by both handlers
 
 	mux := http.NewServeMux()
-	// MODE=bff serves the BFF on "/" too, so the k6 benchmark (always "/?ms=") can target it
+	// MODE=bff serves the BFF on "/" too, so the k6 benchmark (always "/?minWait=&maxWait=") can target it
 	if os.Getenv("MODE") == "bff" {
 		mux.HandleFunc("/", handle("bff", sem, bffJob))
 	} else {

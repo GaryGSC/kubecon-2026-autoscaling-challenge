@@ -106,9 +106,9 @@ How fast can your Pods <em>really</em> scale when the traffic hits?
 ## You get
 
 - a pre-configured cluster (Pod-level autoscaling only)
-- two variants of every app:
-  - <span class="kcd-pill">cpu-hpa</span> Deployment + **CPU HPA**
-  - <span class="kcd-pill">knative-kpa</span> Knative **requests-in-flight**
+- round 1 in two variants, rounds 2-6 as Knative only:
+  - <span class="kcd-pill">cpu-hpa</span> Deployment + **CPU HPA** (round 1)
+  - <span class="kcd-pill">knative-kpa</span> Knative **requests-in-flight** (all rounds)
 - a 4-minute mixed benchmark (k6)
 - one Grafana dashboard
 
@@ -143,7 +143,7 @@ git clone https://github.com/\
 depeche-io/kubecon-2026-\
 autoscaling-challenge
 cd kubecon-2026-autoscaling-challenge
-./scripts/up.sh
+./bin/up.sh
 ```
 
 </div>
@@ -184,7 +184,7 @@ Argo CD <code>:30080</code> · Grafana <code>:30030</code> · Prometheus <code>:
 
 <div>
 
-Argo CD (**argocd-autopilot** layout), everything single-instance:
+Argo CD (plain `Application` manifests), everything single-instance:
 
 - **Istio** 1.29 — ingress for Knative
 - **Knative Serving** 1.24 — KPA, concurrency
@@ -198,14 +198,11 @@ Argo CD (**argocd-autopilot** layout), everything single-instance:
 ```text
 gitops/
 ├── bootstrap/          # Argo CD itself
-├── projects/platform.yaml
-└── apps/
-    ├── istio/
-    ├── knative-serving/
-    ├── kube-prometheus-stack/
-    ├── benchmark-cpu-hpa/
-    └── benchmark-knative-kpa/
-rounds/round1..6/{cpu-hpa,knative-kpa}
+├── projects/           # AppProjects
+├── applications/       # one Application per file
+└── manifests/          # plain YAML (Knative, benchmark, dashboard)
+rounds/round1/{cpu-hpa,knative-kpa}
+rounds/round2..6/knative-kpa
 ```
 
 </div>
@@ -269,11 +266,11 @@ Good autoscaling = <strong>users don't notice</strong> and you <strong>don't pay
 # Round 1 — nginx, static page
 
 ```bash
-kubectl apply -k rounds/round1/cpu-hpa
-kubectl apply -k rounds/round1/knative-kpa
+kubectl apply -n cpu-hpa -f rounds/round1/cpu-hpa
+kubectl apply -n knative-kpa -f rounds/round1/knative-kpa
 ```
 
-- nginx serves the same page for any `?ms=` — the benchmark's waits are ignored
+- nginx serves the same page for any `?minWait=&maxWait=` — the benchmark's waits are ignored
 - CPU HPA at 80 %, Knative target 10 requests in flight
 
 <div class="kcd-card mt-6">
@@ -288,12 +285,12 @@ kubectl apply -k rounds/round1/knative-kpa
 
 ```go
 sem <- struct{}{}          // wait for one of WORKERS (10) slots
-time.Sleep(ms)             // I/O-like wait, no CPU
+time.Sleep(rand(minWait..maxWait)) // I/O-like wait, no CPU
 <-sem
 ```
 
 - throughput is capped at 10 requests in flight per Pod
-- CPU stays near zero → **the CPU HPA never notices**
+- CPU stays near zero → CPU is the wrong signal (**a CPU HPA never notices**)
 - Knative scales on requests in flight → it does
 
 <div class="kcd-card kcd-card-warn mt-6">
@@ -333,7 +330,7 @@ Pod
 
 <div class="kcd-card kcd-card-danger mt-6">
 
-Which container's CPU does the HPA average? Whose requests did you size?
+One Pod, two app containers: which one is the bottleneck? Whose requests did you size?
 
 </div>
 
@@ -347,7 +344,7 @@ Which container's CPU does the HPA average? Whose requests did you size?
 
 <div class="kcd-card kcd-card-warn mt-6">
 
-Knobs: `minReplicas` / `min-scale`, HPA `behavior.scaleUp`, Knative `initial-scale`, CPU limits during startup.
+Knobs: `min-scale`, Knative `initial-scale`, CPU limits during startup.
 
 </div>
 
@@ -375,7 +372,7 @@ Is the cold start worth the saved Pod? Check p99 of the first requests.
 # Round 6 — BFF → microservice
 
 ```text
-k6 ──► BFF (/bff?ms=…&timeout=…&backend_timeout=…) ──► backend (/?ms=…&timeout=…)
+k6 ──► BFF (/bff?minWait=…&maxWait=…&timeout=…&backend_timeout=…) ──► backend (/?minWait=…&maxWait=…&timeout=…)
 ```
 
 - both tiers are the round 2 app, both autoscale independently
@@ -396,7 +393,7 @@ Scale the wrong tier and you just move the queue.
 
 <div>
 
-**HPA**
+**HPA** (round 1, cpu-hpa)
 
 - `metrics[].target.averageUtilization`
 - `minReplicas` / `maxReplicas`

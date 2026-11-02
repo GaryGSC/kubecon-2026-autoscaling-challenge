@@ -1,0 +1,97 @@
+# kube-prometheus-stack (chart v92.17.0) + the autoscaling-challenge Grafana dashboard.
+# Single instance everywhere, no Alertmanager. Chart CRDs are installed by Argo CD (ServerSideApply handles their size).
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: platform-kube-prometheus-stack
+  namespace: argocd
+spec:
+  project: platform
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: monitoring
+  sources:
+  - repoURL: https://prometheus-community.github.io/helm-charts
+    chart: kube-prometheus-stack
+    targetRevision: 92.17.0
+    helm:
+      releaseName: kps
+      valuesObject:
+        alertmanager:
+          enabled: false
+
+        # k3s embeds these in the k3s binary - nothing to scrape
+        kubeControllerManager:
+          enabled: false
+        kubeScheduler:
+          enabled: false
+        kubeProxy:
+          enabled: false
+        kubeEtcd:
+          enabled: false
+
+        # no admission webhook jobs (helm hooks) - keeps the Argo CD sync simple
+        prometheusOperator:
+          tls:
+            enabled: false
+          admissionWebhooks:
+            enabled: false
+
+        grafana:
+          # public tutorial credentials
+          adminUser: admin
+          adminPassword: "@utoSc4ling"
+          service:
+            type: NodePort
+            nodePort: 30030
+
+        prometheus:
+          service:
+            type: NodePort
+            nodePort: 30090
+          prometheusSpec:
+            replicas: 1
+            # 5s scrapes = lots of data points during the 4-minute benchmark;
+            # the timeout must stay below the interval (default 10s would be rejected)
+            scrapeInterval: 5s
+            scrapeTimeout: 4s
+            evaluationInterval: 5s
+            retention: 2d
+            resources:
+              requests:
+                cpu: 200m
+                memory: 512Mi
+              limits:
+                memory: 2Gi
+            # k6 pushes its results via Prometheus remote write
+            enableRemoteWriteReceiver: true
+            # every scraped series gets k8s_cluster (k6 adds it as a tag on its own)
+            scrapeClasses:
+            - name: default
+              default: true
+              relabelings:
+              - targetLabel: k8s_cluster
+                replacement: k3d-autoscaling
+            # pick up ServiceMonitors / PodMonitors / rules from any namespace
+            serviceMonitorSelectorNilUsesHelmValues: false
+            podMonitorSelectorNilUsesHelmValues: false
+            ruleSelectorNilUsesHelmValues: false
+
+  # Grafana dashboard ConfigMap (plain manifest, picked up by the Grafana sidecar)
+  - repoURL: https://github.com/depeche-io/kubecon-2026-autoscaling-challenge.git
+    path: gitops/manifests/grafana-dashboard
+  syncPolicy:
+    automated:
+      allowEmpty: true
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true
+    - ServerSideApply=true
+    # retry on transient failures (large CRDs, slow image pulls)
+    retry:
+      limit: 20
+      backoff:
+        duration: 10s
+        factor: 2
+        maxDuration: 2m

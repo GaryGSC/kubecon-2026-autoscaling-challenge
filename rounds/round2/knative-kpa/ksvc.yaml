@@ -1,3 +1,5 @@
+# Round 2, requests-in-flight autoscaling: Go app with 10 workers as a Knative Service.
+# kubectl apply -n knative-kpa -f rounds/round2/knative-kpa
 apiVersion: serving.knative.dev/v1
 kind: Service
 metadata:

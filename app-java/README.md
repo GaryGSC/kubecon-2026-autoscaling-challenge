@@ -2,7 +2,7 @@
 
 Tiny Spring Boot 3.5 (Java 21, Spring MVC on Tomcat, no WebFlux, no virtual threads) demo for the autoscaling tutorial.
 
-- `GET :8080/?ms=N` sleeps N ms (clamped 0..30000, invalid -> 0) and returns `waited {ms}ms (thread {name})`.
+- `GET :8080/?minWait=A&maxWait=B` sleeps a random int in [A, B] ms (each clamped 0..30000, invalid -> 0, B < A -> B = A) and returns `waited {n}ms (thread {name})`.
 - Management on `:8081`: `/metrics` (Prometheus), `/health`, `/health/liveness`, `/health/readiness`.
 
 Env vars: `TOMCAT_THREADS` (worker pool, default 10), `TOMCAT_ACCEPT_COUNT` (accept backlog, default 100),

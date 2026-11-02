@@ -2,7 +2,7 @@
 
 You get a single-node Kubernetes cluster (k3d) with:
 
-- **Argo CD** managing the platform (argocd-autopilot layout)
+- **Argo CD** managing the platform (plain `Application` manifests in `gitops/`)
 - **Istio + Knative Serving** for requests-in-flight autoscaling
 - **kube-prometheus-stack** (Prometheus + Grafana)
 - **k6 benchmarks** as suspended CronJobs - started from the Argo CD UI

@@ -1,9 +1,0 @@
-# Round 2, requests-in-flight autoscaling: Go app with 10 workers as a Knative Service.
-# kubectl apply -k rounds/round2/knative-kpa
-apiVersion: kustomize.config.k8s.io/v1beta1
-kind: Kustomization
-namespace: knative-kpa
-
-resources:
-- ksvc.yaml
-- podmonitor.yaml

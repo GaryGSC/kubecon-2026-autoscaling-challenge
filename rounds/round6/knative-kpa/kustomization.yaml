@@ -1,9 +1,0 @@
-# Round 6, requests-in-flight autoscaling: BFF (ksvc "app") -> backend (ksvc "backend").
-apiVersion: kustomize.config.k8s.io/v1beta1
-kind: Kustomization
-namespace: knative-kpa
-
-resources:
-- ksvc-bff.yaml
-- ksvc-backend.yaml
-- podmonitor.yaml

@@ -1,1 +1,0 @@
-{"appName":"knative-kpa","userGivenName":"knative-kpa","destNamespace":"knative-kpa","destServer":"https://kubernetes.default.svc","srcPath":"rounds/round1/knative-kpa","srcRepoURL":"https://github.com/depeche-io/kubecon-2026-autoscaling-challenge.git","srcTargetRevision":"","labels":null,"annotations":null}

@@ -8,8 +8,8 @@
     "cpus": 4,
     "memory": "16gb"
   },
-  "postCreateCommand": "bash scripts/install-tools.sh",
-  "postStartCommand": "bash scripts/up.sh",
+  "postCreateCommand": "bash bin/install-tools.sh",
+  "postStartCommand": "bash bin/up.sh",
   "forwardPorts": [30080, 30030, 30090, 8080],
   "portsAttributes": {
     "30080": { "label": "Argo CD" },

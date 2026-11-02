@@ -1,25 +1,22 @@
+# Argo CD manages itself from gitops/bootstrap/argo-cd (the only Kustomize in this repo).
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  creationTimestamp: null
-  labels:
-    app.kubernetes.io/managed-by: argocd-autopilot
-    app.kubernetes.io/name: argo-cd
   name: argo-cd
   namespace: argocd
 spec:
+  project: default
   destination:
-    namespace: argocd
     server: https://kubernetes.default.svc
+    namespace: argocd
+  source:
+    repoURL: https://github.com/depeche-io/kubecon-2026-autoscaling-challenge.git
+    path: gitops/bootstrap/argo-cd
   ignoreDifferences:
   - group: argoproj.io
+    kind: Application
     jsonPointers:
     - /status
-    kind: Application
-  project: default
-  source:
-    path: gitops/bootstrap/argo-cd
-    repoURL: https://github.com/depeche-io/kubecon-2026-autoscaling-challenge.git
   syncPolicy:
     automated:
       allowEmpty: true

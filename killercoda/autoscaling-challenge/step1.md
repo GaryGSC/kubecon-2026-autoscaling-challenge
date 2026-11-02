@@ -9,8 +9,8 @@ Open the UIs (credentials are public for the tutorial: `admin` / `@utoSc4ling`):
 Deploy round 1 in both variants:
 
 ```
-kubectl apply -k rounds/round1/cpu-hpa
-kubectl apply -k rounds/round1/knative-kpa
+kubectl apply -n cpu-hpa -f rounds/round1/cpu-hpa
+kubectl apply -n knative-kpa -f rounds/round1/knative-kpa
 ```{{exec}}
 
 Run a benchmark: Argo CD -> `platform-benchmark-cpu-hpa` -> `bench-all` -> **Create Job**, or:

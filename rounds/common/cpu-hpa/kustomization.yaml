@@ -1,7 +1,0 @@
-# Service "app" (the benchmark target) + CPU HPA, shared by every cpu-hpa round
-apiVersion: kustomize.config.k8s.io/v1beta1
-kind: Kustomization
-
-resources:
-- service.yaml
-- hpa.yaml

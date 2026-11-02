@@ -1,0 +1,44 @@
+# Knative Serving + net-istio, vendored in gitops/manifests/knative-serving (see the header of each file for the local edits).
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: platform-knative-serving
+  namespace: argocd
+spec:
+  project: platform
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: knative-serving
+  source:
+    repoURL: https://github.com/depeche-io/kubecon-2026-autoscaling-challenge.git
+    path: gitops/manifests/knative-serving
+  ignoreDifferences:
+  # istiod and the Knative webhooks inject their own CA bundles / failure policies
+  - group: admissionregistration.k8s.io
+    kind: ValidatingWebhookConfiguration
+    jqPathExpressions:
+    - .webhooks[]?.clientConfig.caBundle
+    - .webhooks[]?.failurePolicy
+    - .webhooks[]?.rules
+  - group: admissionregistration.k8s.io
+    kind: MutatingWebhookConfiguration
+    jqPathExpressions:
+    - .webhooks[]?.clientConfig.caBundle
+    - .webhooks[]?.rules
+  syncPolicy:
+    automated:
+      allowEmpty: true
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true
+    - ServerSideApply=true
+    - RespectIgnoreDifferences=true
+    # Knative's net-istio needs the Istio CRDs and monitors.yaml the prometheus-operator CRDs -
+    # keep retrying until the istio and kube-prometheus-stack apps land
+    retry:
+      limit: 20
+      backoff:
+        duration: 10s
+        factor: 2
+        maxDuration: 2m

@@ -1,3 +1,5 @@
+# Round 1, requests-in-flight autoscaling: nginx as a Knative Service (KPA, concurrency).
+# kubectl apply -n knative-kpa -f rounds/round1/knative-kpa
 apiVersion: serving.knative.dev/v1
 kind: Service
 metadata:
