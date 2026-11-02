@@ -15,8 +15,8 @@ const DURATION = num('DURATION', 90);
 
 const PROFILES = {
   fast: { vus: 20, minWait: 10, maxWait: 100 },
-  slow: { vus: 5, minWait: 1000, maxWait: 2000 },
-  medium: { vus: 10, minWait: 200, maxWait: 1500 },
+  slow: { vus: 5, minWait: 1000, maxWait: 3000 },
+  medium: { vus: 10, minWait: 200, maxWait: 1000 },
 };
 
 // apply env overrides: <PROFILE>_VUS, _MIN_WAIT, _MAX_WAIT

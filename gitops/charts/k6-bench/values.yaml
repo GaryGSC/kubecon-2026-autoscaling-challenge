@@ -12,11 +12,11 @@ scenarios:
   slow:
     vus: 5
     minWait: 1000
-    maxWait: 2000
+    maxWait: 3000
   medium:
     vus: 10
     minWait: 200
-    maxWait: 1500
+    maxWait: 1000
 
 image: grafana/k6:2.3.0
 
