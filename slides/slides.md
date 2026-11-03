@@ -363,11 +363,6 @@ behavior:
 
 </div>
 
-<div v-click class="guess mt-6">
-
-**My guess:** scales up within ~30–60 s and keeps going toward 10 — nginx is pinned at its `100m` limit. Utilization is usage ÷ **requests**, not the limit. Scale-down only 2 min after the run.
-
-</div>
 
 ---
 layout: center
