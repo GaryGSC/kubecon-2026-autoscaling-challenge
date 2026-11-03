@@ -286,9 +286,7 @@ Good autoscaling = <strong>users don't notice</strong> and you <strong>don't pay
 
 # Testing methodology — the loop
 
-<div class="grid grid-cols-[1fr_1fr] gap-10 mt-4">
-
-<div>
+<div class="mt-4">
 
 1. **Pick** the round — open its Argo CD app
 2. **Tune** — autoscaling resource → *Live manifest* → *Edit*<br/>
@@ -304,19 +302,6 @@ kubectl -n round2 create job --from=cronjob/bench-all bench-$(date +%s)
 
 </div>
 
-<div class="kcd-card kcd-card-bee">
-
-**Leaderboard rules** 🏆
-
-1. availability **≥ 99.9 %** — otherwise you're out
-2. lowest **p99** latency
-3. tie-breaker: fewest **avg. app Pods**
-
-<div class="kcd-source">One <code>bench-all</code> run. Every cluster remote-writes to a central Prometheus — results compared across clusters, anonymized.</div>
-
-</div>
-
-</div>
 
 ---
 
