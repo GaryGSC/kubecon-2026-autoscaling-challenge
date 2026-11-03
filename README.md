@@ -96,6 +96,7 @@ so the manual switch sticks. The benchmark source stays on `main`.
 | Round | Improvement on `improved` |
 |---|---|
 | `round1-cpu` | no HPA; one bigger Pod: nginx `worker_processes 5`, 500m CPU |
+| `round2` | faster scale down: Knative stable `window` 20s instead of 60s |
 
 ## Container images
 
