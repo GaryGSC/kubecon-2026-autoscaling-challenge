@@ -412,21 +412,28 @@ Argo CD `challenge-round1-cpu` → `bench-all` → **Create Job** · Grafana `na
 
 ---
 
-# Round 1 · Improved — before
+# Round 1 · Improved — before vs. after
 
-<Shot src="/results/round1-improved-1.png" />
+<div class="grid grid-cols-[2fr_3fr] gap-8 mt-2">
 
----
+<div>
 
-# Round 1 · Improved — after
+## Before
 
-<Shot src="/results/round1-improved-2.png" />
+<div class="h-90"><Shot src="/results/round1-improved-1.png" /></div>
 
----
+</div>
 
-# Round 1 · Improved — after
+<div>
 
-<Shot src="/results/round1-improved-3.png" />
+## After
+
+<div class="h-44"><Shot src="/results/round1-improved-2.png" /></div>
+<div class="h-44 mt-2"><Shot src="/results/round1-improved-3.png" /></div>
+
+</div>
+
+</div>
 
 ---
 
