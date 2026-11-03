@@ -4,7 +4,7 @@ metadata:
   name: app-nginx
 data:
   nginx.conf: |
-    worker_processes 1;
+    worker_processes 5;
     pid /tmp/nginx.pid;
     error_log /dev/stderr warn;
 

@@ -1,11 +1,11 @@
-# Round 1, CPU-based autoscaling: nginx + HPA on CPU utilization.
+# Round 1, improved: no autoscaler - one right-sized nginx Pod (5 workers, 500m CPU limit).
 # kubectl apply -n round1-cpu -f rounds/round1-cpu
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: app
 spec:
-  # no replicas: the HPA owns them (minReplicas 1) - setting it here makes every Argo CD sync reset the scale
+  replicas: 1
   selector:
     matchLabels:
       app: app
@@ -22,11 +22,11 @@ spec:
           containerPort: 8080
         resources:
           requests:
-            cpu: 25m
-            memory: 16Mi
+            cpu: 125m
+            memory: 32Mi
           limits:
-            cpu: 100m
-            memory: 64Mi
+            cpu: 500m
+            memory: 128Mi
         volumeMounts:
         - name: html
           mountPath: /usr/share/nginx/html
