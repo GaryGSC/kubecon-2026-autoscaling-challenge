@@ -165,7 +165,7 @@ Argo CD <code>:30080</code> · Grafana <code>:30030</code> · Prometheus <code>:
 
 ---
 
-# The technology doesn't matter (much)
+# The technology doesn't matter
 
 <div class="grid grid-cols-[1fr_1fr] gap-10 mt-4">
 
@@ -173,7 +173,7 @@ Argo CD <code>:30080</code> · Grafana <code>:30030</code> · Prometheus <code>:
 
 What's in the box — all of it is **plumbing**:
 
-- **Argo CD** — deploys and resets the rounds
+- **Argo CD** — GitOps
 - **Istio + Knative Serving** — the second autoscaler
 - **kube-prometheus-stack** — 5 s scrapes, one dashboard
 - **k6** — the load, as suspended CronJobs
