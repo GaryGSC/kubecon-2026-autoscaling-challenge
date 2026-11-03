@@ -295,7 +295,8 @@ Good autoscaling = <strong>users don't notice</strong> and you <strong>don't pay
    <span class="text-sm opacity-80">self-heal is off; *Sync* resets the round</span>
 3. **Run** — CronJob `bench-all` → *⋯* → **Create Job**
 4. **Read** — Grafana, `namespace` = the round
-5. Change **one knob** at a time, repeat
+5. **Tune it** — one knob at a time
+6. **Rerun**
 
 ```bash
 kubectl -n round2 create job --from=cronjob/bench-all bench-$(date +%s)
@@ -311,7 +312,7 @@ kubectl -n round2 create job --from=cronjob/bench-all bench-$(date +%s)
 2. lowest **p99** latency
 3. tie-breaker: fewest **avg. app Pods**
 
-<div class="kcd-source">One <code>bench-all</code> run, numbers from the dashboard.</div>
+<div class="kcd-source">One <code>bench-all</code> run. Every cluster remote-writes to a central Prometheus — results compared across clusters, anonymized.</div>
 
 </div>
 
@@ -1034,7 +1035,7 @@ Argo CD `challenge-round6` → `bench-all` → **Create Job** · Grafana `namesp
 
 </div>
 
-<div class="kcd-source">Draft. All numbers from the "Autoscaling Reality Check" dashboard, one <code>bench-all</code> run - planned: every cluster remote-writes to a central Grafana leaderboard.</div>
+<div class="kcd-source">One <code>bench-all</code> run. Every cluster remote-writes to a central Prometheus — results compared across clusters, anonymized.</div>
 
 ---
 
