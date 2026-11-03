@@ -368,7 +368,25 @@ Argo CD `challenge-round1-cpu` → `bench-all` → **Create Job** · Grafana `na
 
 # Round 1 · CPU HPA — results
 
-<Shot src="/results/round1-cpu.png" />
+## Why is there 1 slow startup?
+
+<Shot src="/results/round1-cpu-1.png" />
+
+---
+
+# Round 1 · CPU HPA — results
+
+## Did all the Pods serve ~ the same amount of requests?
+
+<Shot src="/results/round1-cpu-2.png" />
+
+---
+
+# Round 1 · CPU HPA — results
+
+## Millions of requests served without any error.
+
+<Shot src="/results/round1-cpu-3.png" />
 
 ---
 
