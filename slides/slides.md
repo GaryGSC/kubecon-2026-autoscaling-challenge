@@ -264,8 +264,8 @@ All scenarios call `http://app.<namespace>/?minWait=<min>&maxWait=<max>` (k6 `co
 
 **Cost view** (cluster)
 
-- CPU efficiency = usage / requests
-- memory efficiency = usage / requests
+- CPU efficiency = usage / limits
+- memory efficiency = usage / limits
 - avg. number of app Pods
 
 </div>
@@ -312,7 +312,7 @@ kubectl -n round2 create job --from=cronjob/bench-all bench-$(date +%s)
 <div>
 
 - `nginx:1.29-alpine`, the same static page for any `?minWait=&maxWait=` — the waits are **ignored**
-- nginx: requests = limits = `100m`
+- nginx: requests `25m`, limits `100m`
 - plain Deployment + Service, no Knative
 
 </div>
@@ -576,7 +576,7 @@ time.Sleep(rand(minWait..maxWait))  // I/O-like wait, no CPU
 ```
 
 - 10 requests in flight per Pod, the rest **queue** inside the app
-- requests = limits = `200m`
+- requests `50m`, limits `200m`
 - Knative, target 10, min 1, max 10
 
 </div>
@@ -665,8 +665,8 @@ Argo CD `challenge-round2` → `bench-all` → **Create Job** · Grafana `namesp
 
 ```text
 Pod                       requests
-├── nginx      :8080 ─┐    100m
-├── php-fpm    :9000 ◄┘    200m   (10 workers)
+├── nginx      :8080 ─┐     25m
+├── php-fpm    :9000 ◄┘     50m   (10 workers)
 └── queue-proxy (Knative)
 ```
 
@@ -740,7 +740,7 @@ Argo CD `challenge-round3` → `bench-all` → **Create Job** · Grafana `namesp
 - Spring MVC, `TOMCAT_THREADS=10` + accept queue
 - JVM start under a **500m CPU limit**
 - `STARTUP_DELAY_SECONDS=30` warm-up before readiness
-- requests = limits = `500m` / `384Mi`
+- requests `125m` / `96Mi`, limits `500m` / `384Mi`
 - Knative, target 10
 
 </div>

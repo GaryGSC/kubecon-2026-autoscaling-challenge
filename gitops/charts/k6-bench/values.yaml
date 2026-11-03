@@ -23,8 +23,9 @@ clusterTag: k3d-autoscaling
 resources:
   requests:
     cpu: 500m
-    memory: 256Mi
+    memory: 128Mi
   limits:
+    cpu: 2000m
     memory: 512Mi
 
 # Go GC works harder near this instead of overshooting the memory limit (~90 % of it)
