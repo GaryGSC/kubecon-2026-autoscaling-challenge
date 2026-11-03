@@ -606,6 +606,20 @@ Argo CD `challenge-round2` → `bench-all` → **Create Job** · Grafana `namesp
 
 ---
 
+# Round 2 · Improved — before vs. after
+
+<div class="grid grid-cols-[auto_1fr] gap-x-6 gap-y-3 items-center mt-2">
+
+<div class="text-lg font-bold text-[#B9C6E8]">Before<br/><span class="text-sm font-normal">60 s window</span></div>
+<div class="h-44"><Shot src="/results/round2-improved-before.png" /></div>
+
+<div class="text-lg font-bold text-[#B9C6E8]">After<br/><span class="text-sm font-normal">20 s window</span></div>
+<div class="h-44"><Shot src="/results/round2-improved-after.png" /></div>
+
+</div>
+
+---
+
 # Round 3 · nginx + php-fpm — setup
 
 <div class="grid grid-cols-[1fr_1fr] gap-8 mt-2">
