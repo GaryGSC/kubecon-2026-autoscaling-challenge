@@ -327,9 +327,7 @@ kubectl -n round2 create job --from=cronjob/bench-all bench-$(date +%s)
 <div>
 
 - `nginx:1.29-alpine`, the same static page for any `?minWait=&maxWait=` — the waits are **ignored**
-- `worker_processes 1`, 512 connections
 - nginx: request `50m`, limit `100m`
-- + 2 exporter sidecars (`5m`, `25m` requested)
 - plain Deployment + Service, no Knative
 
 </div>
@@ -367,7 +365,7 @@ behavior:
 
 <div v-click class="guess mt-6">
 
-**My guess:** scales up within ~30–60 s and keeps going toward 10 — nginx is pinned at its `100m` limit. Utilization is Pod usage ÷ the **sum of all containers' requests** (80m), so the sidecars count too. Scale-down only 2 min after the run.
+**My guess:** scales up within ~30–60 s and keeps going toward 10 — nginx is pinned at its `100m` limit. Utilization is usage ÷ **requests**, not the limit. Scale-down only 2 min after the run.
 
 </div>
 
@@ -401,9 +399,7 @@ Argo CD `challenge-round1-cpu` → `bench-all` → **Create Job** · Grafana `na
 <div>
 
 - **Right-size requests** — utilization is relative to them; wrong requests = wrong scaling
-- **`type: ContainerResource`** on `nginx` — ignore the sidecars
 - drop the CPU **limit** — throttling makes latency, not throughput
-- `worker_processes auto`
 
 </div>
 
@@ -683,9 +679,6 @@ Argo CD `challenge-round2` → `bench-all` → **Create Job** · Grafana `namesp
 Pod                       requests
 ├── nginx      :8080 ─┐     50m
 ├── php-fpm    :9000 ◄┘     50m   (10 workers)
-├── nginx-exporter           5m
-├── log-exporter            25m
-├── fpm-exporter             5m
 └── queue-proxy (Knative)
 ```
 
@@ -705,7 +698,7 @@ Pod                       requests
 
 <div v-click class="guess mt-6">
 
-**My guess:** behaves like round 2 — php-fpm's 10 workers are the limit, nginx is idle. But every replica brings 5 containers + queue-proxy: ~135m requested per Pod. A CPU HPA would average idle nginx and sidecars into the signal.
+**My guess:** behaves like round 2 — php-fpm's 10 workers are the limit, nginx is idle. But every replica brings nginx too, idle or not. A CPU HPA would average idle nginx into the signal.
 
 </div>
 
@@ -739,8 +732,7 @@ Argo CD `challenge-round3` → `bench-all` → **Create Job** · Grafana `namesp
 <div>
 
 - `target` = `FPM_WORKERS` — the worker pool is the capacity
-- right-size **per container** — nginx and the exporters need little
-- fewer sidecars per replica — do you need all of them?
+- right-size **per container** — nginx needs little
 
 </div>
 
@@ -851,7 +843,7 @@ Argo CD `challenge-round4` → `bench-all` → **Create Job** · Grafana `namesp
 
 - round 1 nginx again
 - `min-scale: "0"` — idle ~60 s → **0 Pods**
-- `imagePullPolicy: Always` on all 3 containers
+- `imagePullPolicy: Always`
 - next request waits in the **activator** for a cold start
 
 </div>
@@ -878,13 +870,13 @@ imagePullPolicy: Always
 - How long does the first request wait?
 - How many requests pay the cold start?
 - What does it do to p99?
-- Is one 80m Pod worth it?
+- Is one idle Pod worth it?
 
 </div>
 
 <div v-click class="guess mt-6">
 
-**My guess:** 2–5 s for the first ~50 requests (one per VU) — registry round-trip × 3 images, container start, readiness. Images stay cached on one node, so this is the *good* case. p99 of a short run is mostly cold start.
+**My guess:** 2–5 s for the first ~50 requests (one per VU) — registry round-trip, container start, readiness. Images stay cached on one node, so this is the *good* case. p99 of a short run is mostly cold start.
 
 </div>
 
@@ -919,7 +911,6 @@ Argo CD `challenge-round5` → wait for 0 Pods → `bench-all` → **Create Job*
 
 - `min-scale: "1"` — honestly, usually the answer
 - `imagePullPolicy: IfNotPresent`, smaller images
-- fewer containers to start
 
 </div>
 
