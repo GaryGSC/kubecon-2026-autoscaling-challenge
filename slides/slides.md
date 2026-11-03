@@ -389,6 +389,14 @@ Argo CD `challenge-round1-cpu` → `bench-all` → **Create Job** · Grafana `na
 
 ---
 
+# Round 1 · CPU HPA — results
+
+## Why do we keep Pods running after the load test?
+
+<Shot src="/results/round1-cpu-4.png" />
+
+---
+
 # Round 1 · CPU HPA — how to improve
 
 <div class="grid grid-cols-2 gap-8 mt-4">
