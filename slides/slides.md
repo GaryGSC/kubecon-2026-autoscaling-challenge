@@ -45,8 +45,6 @@ layout: center
 
 <div class="text-4xl font-bold tracking-tight">David Pech</div>
 
-<div class="text-lg opacity-80">Developer turned infrastructure · SaaS · a few clouds along the way</div>
-
 <div class="flex items-center gap-12 mt-2">
   <img src="/wrike-logo.svg" class="h-14" style="filter: brightness(0) invert(1);" />
   <img src="/kubestronaut.png" class="h-20" />

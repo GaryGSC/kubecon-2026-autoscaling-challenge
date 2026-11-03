@@ -825,6 +825,7 @@
         "defaults": {
           "unit": "percentunit",
           "custom": {
+            "axisSoftMax": 1,
             "lineWidth": 2,
             "fillOpacity": 0,
             "stacking": {
@@ -941,6 +942,7 @@
         "defaults": {
           "unit": "percentunit",
           "custom": {
+            "axisSoftMax": 1,
             "lineWidth": 2,
             "fillOpacity": 0,
             "stacking": {
