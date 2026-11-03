@@ -54,15 +54,15 @@ gitops/                 # Argo CD (v3.5.6) - plain Application manifests, Kustom
 │   ├── platform-istio.yaml                  # Istio 1.29.10 (base, istiod, ingress gateway), single replica
 │   ├── platform-knative-serving.yaml        # Knative Serving + net-istio v1.24.0
 │   ├── platform-kube-prometheus-stack.yaml  # 92.17.0, no Alertmanager, 5s scrapes, k6 remote write, dashboard
-│   └── challenge-<round>.yaml               # 7 apps (round1-cpu, round1-in-flight, round2..6), one namespace each:
+│   └── challenge-<round>.yaml               # 6 apps (round1-cpu, round2..6), one namespace each:
 │                                            #   rounds/<round> + the k6-bench chart (CronJobs) in the same app
 ├── charts/
 │   └── k6-bench/       #   local Helm chart: k6 script (files/bench.js) + 3 suspended CronJobs (fast, slow, all)
 └── manifests/          #   plain YAML used by the Applications
     ├── knative-serving/    # vendored upstream YAML (HA HPAs/PDBs removed, metrics on) + ServiceMonitors
     └── grafana-dashboard/  # the dashboard JSON + kustomization.yaml turning it into a ConfigMap
-rounds/round1-cpu  rounds/round1-in-flight   # round 1 as CPU HPA / as Knative requests in flight
-rounds/round2..6                              # rounds 2-6 as Knative (plain YAML, no Kustomize)
+rounds/round1-cpu    # round 1: Deployment + CPU HPA
+rounds/round2..6     # rounds 2-6 as Knative (plain YAML, no Kustomize)
 app-go/  app-php/  app-java/             # demo apps (images built by .github/workflows, linux/amd64 + arm64)
 k3d/cluster.yaml  bin/  .devcontainer/  killercoda/  slides/
 ```
@@ -117,9 +117,8 @@ The repo was built in one working session, starting from the session abstract:
 - **Format** - a KubeCon Tutorial (80 min, hands-on on attendees' laptops). Conference Wi-Fi is unreliable, so
   everything runs locally on a single-node k3d cluster; Codespaces and Killercoda are fallbacks running the same
   `up.sh`. Shared-cloud options (EKS / GKE / OKE, ~$200-475 for a 512 vCPU day) were considered and dropped.
-- **Scope** - Pod-level autoscaling only, no node autoscaling. Round 1 in two variants side by side: CPU-based HPA
-  (`round1-cpu`) vs. Knative requests-in-flight (`round1-in-flight`); every round (1 in two variants, 2-6) runs at
-  the same time in its own namespace and Argo CD app (`challenge-<round>`), together with its own benchmark CronJobs.
+- **Scope** - Pod-level autoscaling only, no node autoscaling. Round 1 is a CPU-based HPA (`round1-cpu`), rounds 2-6
+  autoscale on Knative requests in flight; every round runs at the same time in its own namespace and Argo CD app (`challenge-<round>`), together with its own benchmark CronJobs.
 - **Platform** - Argo CD with plain `Application` manifests, Istio + Knative, kube-prometheus-stack (no Alertmanager,
   5s scrapes for dense data). Everything single-instance to leave the CPU to the workloads. Public credentials.
 - **Benchmark** - k6 with two 120 s scenarios (fast 50 VUs, slow 5) plus `all` (both in series), as

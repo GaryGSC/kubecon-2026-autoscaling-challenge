@@ -24,9 +24,9 @@ $K apply -f gitops/bootstrap/argo-cd.yaml -f gitops/bootstrap/root.yaml -f gitop
 
 echo "==> Waiting for the apps - up to ${TIMEOUT}s"
 # platform apps must be Synced + Healthy; the round apps (one per namespace) only Synced -
-# their Knative services keep warming up after that and waiting for all seven Healthy would be slow
+# their Knative services keep warming up after that and waiting for all six Healthy would be slow
 PLATFORM_APPS="platform-istio platform-knative-serving platform-kube-prometheus-stack"
-ROUND_APPS="challenge-round1-cpu challenge-round1-in-flight challenge-round2 challenge-round3 challenge-round4 challenge-round5 challenge-round6"
+ROUND_APPS="challenge-round1-cpu challenge-round2 challenge-round3 challenge-round4 challenge-round5 challenge-round6"
 deadline=$((SECONDS + TIMEOUT))
 while :; do
   ready=0

@@ -29,11 +29,6 @@ spec:
     - /spec/sources/0/targetRevision
   - group: argoproj.io
     kind: Application
-    name: challenge-round1-in-flight
-    jsonPointers:
-    - /spec/sources/0/targetRevision
-  - group: argoproj.io
-    kind: Application
     name: challenge-round2
     jsonPointers:
     - /spec/sources/0/targetRevision

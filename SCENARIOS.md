@@ -1,11 +1,10 @@
 # Scenarios
 
-Every round is its own Argo CD app in its own namespace, and all seven run side by side. Round 1 comes in two variants; rounds 2-6 are Knative services:
+Every round is its own Argo CD app in its own namespace, and all six run side by side. Round 1 is a CPU-based HPA; rounds 2-6 are Knative services:
 
 | Round | Namespace | Autoscaler | Argo CD app |
 |---|---|---|---|
-| 1 - CPU-based | `round1-cpu` | `HorizontalPodAutoscaler`, CPU utilization 80 % | [challenge-round1-cpu](http://localhost:30080/applications/argocd/challenge-round1-cpu) |
-| 1 - requests in flight | `round1-in-flight` | Knative KPA, concurrency target 10 | [challenge-round1-in-flight](http://localhost:30080/applications/argocd/challenge-round1-in-flight) |
+| 1 | `round1-cpu` | `HorizontalPodAutoscaler`, CPU utilization 80 % | [challenge-round1-cpu](http://localhost:30080/applications/argocd/challenge-round1-cpu) |
 | 2 | `round2` | Knative KPA | [challenge-round2](http://localhost:30080/applications/argocd/challenge-round2) |
 | 3 | `round3` | Knative KPA | [challenge-round3](http://localhost:30080/applications/argocd/challenge-round3) |
 | 4 | `round4` | Knative KPA | [challenge-round4](http://localhost:30080/applications/argocd/challenge-round4) |
@@ -24,7 +23,6 @@ Each Argo CD app shows the round's manifests (`rounds/<namespace>`) and its benc
 3. **Benchmark** - in the same app: CronJob `bench-all` (or `bench-fast` / `bench-slow`) -> *...* -> **Create Job**. Run them one at a time.
 4. **Read the result** - Grafana dashboard *Autoscaling Reality Check*, `namespace` = the round's namespace, e.g.
    [round1-cpu](http://localhost:30030/d/autoscaling-challenge?var-namespace=round1-cpu) /
-   [round1-in-flight](http://localhost:30030/d/autoscaling-challenge?var-namespace=round1-in-flight) /
    [round2](http://localhost:30030/d/autoscaling-challenge?var-namespace=round2) (same pattern for `round3` .. `round6`).
 
 Benchmark CronJob example: [round1-cpu `bench-all`](http://localhost:30080/applications/argocd/challenge-round1-cpu?resource=&node=batch%2FCronJob%2Fround1-cpu%2Fbench-all%2F0).
@@ -51,7 +49,6 @@ nginx serves the same static page for any `?minWait=&maxWait=` (the requested wa
 
 - Watch: does anything scale? *CPU usage* vs. *requests*, *CPU efficiency*, nginx *Connections*.
 - round1-cpu (CPU HPA): [HPA `app`](http://localhost:30080/applications/argocd/challenge-round1-cpu?resource=&node=autoscaling%2FHorizontalPodAutoscaler%2Fround1-cpu%2Fapp%2F0) · [Deployment `app`](http://localhost:30080/applications/argocd/challenge-round1-cpu?resource=&node=apps%2FDeployment%2Fround1-cpu%2Fapp%2F0)
-- round1-in-flight (Knative): [Knative Service `app`](http://localhost:30080/applications/argocd/challenge-round1-in-flight?resource=&node=serving.knative.dev%2FService%2Fround1-in-flight%2Fapp%2F0)
 
 ### Round 2 - Go app, 10 workers
 

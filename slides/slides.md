@@ -203,14 +203,13 @@ What we care about: **which signal** you scale on, **how long** a new Pod takes 
 
 ---
 
-# Seven rounds, side by side
+# Six rounds, side by side
 
 Every round is its own namespace + Argo CD app (`challenge-<round>`), all running at once.
 
 | Round | App | Autoscaler | Lesson |
 |---|---|---|---|
 | `round1-cpu` | nginx, static page | HPA, CPU 80 % | does CPU tell you anything? |
-| `round1-in-flight` | nginx, static page | Knative, 10 in flight | same app, other signal |
 | `round2` | Go, 10 workers | Knative | saturation at ~0 % CPU |
 | `round3` | nginx + php-fpm, one Pod | Knative | the Pod is the scaling unit |
 | `round4` | Spring MVC, 30 s warm-up | Knative | startup time is your budget |
@@ -413,89 +412,21 @@ Argo CD `challenge-round1-cpu` → `bench-all` → **Create Job** · Grafana `na
 
 ---
 
-# Round 1 · requests in flight — setup
+# Round 1 · Improved — before
 
-<div class="grid grid-cols-[1fr_1fr] gap-8 mt-2">
-
-<div>
-
-- the **same nginx** Pod as `round1-cpu`
-- Knative Service instead of Deployment + HPA
-- KPA scales on **concurrency** (requests in flight per Pod), measured by the queue-proxy sidecar
-- no `containerConcurrency` limit (0 = unlimited)
-
-</div>
-
-```yaml
-# rounds/round1-in-flight/ksvc.yaml
-autoscaling.knative.dev/class: kpa.autoscaling.knative.dev
-autoscaling.knative.dev/metric: concurrency
-autoscaling.knative.dev/target: "10"
-autoscaling.knative.dev/window: "60s"
-autoscaling.knative.dev/min-scale: "1"
-autoscaling.knative.dev/max-scale: "10"
-```
-
-</div>
+<Shot src="/results/round1-improved-1.png" />
 
 ---
 
-# Round 1 · requests in flight — expectations
+# Round 1 · Improved — after
 
-<div class="text-xl mt-4 leading-loose">
-
-- 50 VUs, target 10 → how many Pods?
-- Does CPU matter at all now?
-- Same app as `round1-cpu` — same result?
-
-</div>
-
-
----
-layout: center
-class: section text-center
----
-
-# 🎬 Demo time
-
-## Round 1 · requests in flight
-
-<div class="mt-6 text-lg">
-
-Argo CD `challenge-round1-in-flight` → `bench-all` → **Create Job** · Grafana `namespace=round1-in-flight`
-
-</div>
+<Shot src="/results/round1-improved-2.png" />
 
 ---
 
-# Round 1 · requests in flight — results
+# Round 1 · Improved — after
 
-<Shot src="/results/round1-in-flight.png" />
-
----
-
-# Round 1 · requests in flight — how to improve
-
-<div class="grid grid-cols-2 gap-8 mt-4">
-
-<div>
-
-- set `target` to what one Pod **really** handles — measure it
-- `target-utilization-percentage` — headroom vs. Pods
-- `metric: rps` for uniform, short requests
-- `containerConcurrency` — hard limit, the rest waits in the activator
-
-</div>
-
-<div>
-
-- `window` — shorter reacts faster, flaps more
-- panic settings — next slides
-- compare with `round1-cpu`: same app, two signals, which one is right?
-
-</div>
-
-</div>
+<Shot src="/results/round1-improved-3.png" />
 
 ---
 
