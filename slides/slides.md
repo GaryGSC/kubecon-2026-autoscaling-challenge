@@ -450,11 +450,6 @@ autoscaling.knative.dev/max-scale: "10"
 
 </div>
 
-<div v-click class="guess mt-6">
-
-**My guess:** 2–3 Pods. Requests take ~1 ms, so few of them are *in flight* at once even with 50 VUs. The real target is 10 × 70 % (`target-utilization-percentage` default) = **7**. KPA reacts to load, not to CPU — the throttled nginx doesn't trigger anything.
-
-</div>
 
 ---
 layout: center
@@ -607,11 +602,6 @@ Think: a DB connection pool, a thread pool, a downstream API. The app is **full*
 
 </div>
 
-<div v-click class="guess mt-6">
-
-**My guess:** CPU stays near zero — a CPU HPA would **never** scale. Knative sees the requests in flight: ~7–8 Pods during `fast` (50 in flight ÷ 7), 1 Pod is enough for `slow` (5 in flight < 10 workers). p99 ≈ the wait itself, unless Pods arrive late.
-
-</div>
 
 ---
 layout: center
@@ -694,11 +684,6 @@ Pod                       requests
 
 </div>
 
-<div v-click class="guess mt-6">
-
-**My guess:** behaves like round 2 — php-fpm's 10 workers are the limit, nginx is idle. But every replica brings nginx too, idle or not. A CPU HPA would average idle nginx into the signal.
-
-</div>
 
 ---
 layout: center
@@ -780,11 +765,6 @@ The usual enterprise app: slow JVM start, caches to fill, *Ready* only after war
 
 </div>
 
-<div v-click class="guess mt-6">
-
-**My guess:** 45–60 s per new Pod (JVM boot under the limit + 30 s warm-up). Panic asks for Pods within seconds, they arrive when half the burst is over — p99 spikes, then Pods stay for a minute after.
-
-</div>
 
 ---
 layout: center
@@ -872,11 +852,6 @@ imagePullPolicy: Always
 
 </div>
 
-<div v-click class="guess mt-6">
-
-**My guess:** 2–5 s for the first ~50 requests (one per VU) — registry round-trip, container start, readiness. Images stay cached on one node, so this is the *good* case. p99 of a short run is mostly cold start.
-
-</div>
 
 ---
 layout: center
@@ -961,11 +936,6 @@ The BFF holds a worker while it waits for the backend. A stuck backend fills the
 
 </div>
 
-<div v-click class="guess mt-6">
-
-**My guess:** ~¼ of the `slow` requests (wait > 2.5 s) end as **504** — that's the config, not autoscaling. Both tiers scale on requests in flight; scaling just one only moves the queue.
-
-</div>
 
 ---
 layout: center
