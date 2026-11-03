@@ -88,7 +88,7 @@ spec:
             podMonitorSelectorNilUsesHelmValues: false
             ruleSelectorNilUsesHelmValues: false
 
-  # Grafana dashboard ConfigMap (plain manifest, picked up by the Grafana sidecar)
+  # Grafana dashboard ConfigMap (Kustomize configMapGenerator from autoscaling-challenge.json, picked up by the Grafana sidecar)
   - repoURL: https://github.com/depeche-io/kubecon-2026-autoscaling-challenge.git
     path: gitops/manifests/grafana-dashboard
   syncPolicy:

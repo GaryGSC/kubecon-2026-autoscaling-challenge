@@ -1,0 +1,13 @@
+# Grafana dashboard, picked up by the Grafana sidecar through the grafana_dashboard label.
+# autoscaling-challenge.json is the only copy - edit it in Grafana, then paste the exported JSON
+# (Share -> Export -> JSON, "Export for sharing externally" off) over the file.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+configMapGenerator:
+- name: dashboard-autoscaling-challenge
+  files:
+  - autoscaling-challenge.json
+  options:
+    disableNameSuffixHash: true
+    labels:
+      grafana_dashboard: "1"

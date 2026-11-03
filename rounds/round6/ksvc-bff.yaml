@@ -12,7 +12,7 @@ spec:
         autoscaling.knative.dev/metric: concurrency
         # requests in flight per Pod the autoscaler aims for
         autoscaling.knative.dev/target: "10"
-        autoscaling.knative.dev/window: "30s"
+        autoscaling.knative.dev/window: "60s"
         autoscaling.knative.dev/min-scale: "1"
         autoscaling.knative.dev/max-scale: "10"
     spec:

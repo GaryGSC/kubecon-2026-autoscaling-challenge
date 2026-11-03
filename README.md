@@ -57,10 +57,10 @@ gitops/                 # Argo CD (v3.5.6) - plain Application manifests, Kustom
 │   └── challenge-<round>.yaml               # 7 apps (round1-cpu, round1-in-flight, round2..6), one namespace each:
 │                                            #   rounds/<round> + the k6-bench chart (CronJobs) in the same app
 ├── charts/
-│   └── k6-bench/       #   local Helm chart: k6 script (files/bench.js) + 4 suspended CronJobs (fast, slow, medium, all)
+│   └── k6-bench/       #   local Helm chart: k6 script (files/bench.js) + 3 suspended CronJobs (fast, slow, all)
 └── manifests/          #   plain YAML used by the Applications
     ├── knative-serving/    # vendored upstream YAML (HA HPAs/PDBs removed, metrics on) + ServiceMonitors
-    └── grafana-dashboard/  # the dashboard ConfigMap
+    └── grafana-dashboard/  # the dashboard JSON + kustomization.yaml turning it into a ConfigMap
 rounds/round1-cpu  rounds/round1-in-flight   # round 1 as CPU HPA / as Knative requests in flight
 rounds/round2..6                              # rounds 2-6 as Knative (plain YAML, no Kustomize)
 app-go/  app-php/  app-java/             # demo apps (images built by .github/workflows, linux/amd64 + arm64)
@@ -104,7 +104,7 @@ The repo was built in one working session, starting from the session abstract:
   the same time in its own namespace and Argo CD app (`challenge-<round>`), together with its own benchmark CronJobs.
 - **Platform** - Argo CD with plain `Application` manifests, Istio + Knative, kube-prometheus-stack (no Alertmanager,
   5s scrapes for dense data). Everything single-instance to leave the CPU to the workloads. Public credentials.
-- **Benchmark** - k6 with three 90 s scenarios (fast 20 VUs, slow 5, medium 10) plus `all` (the three in series), as
+- **Benchmark** - k6 with two 120 s scenarios (fast 20 VUs, slow 5) plus `all` (both in series), as
   suspended CronJobs started from the Argo CD UI - no extra UI. Results go to Prometheus via remote write.
 - **Rounds** - nginx static (1), Go app with 10 workers (2), nginx + php-fpm as two containers in one Pod (3),
   Spring MVC with slow startup (4), scale to zero + `imagePullPolicy: Always` (5), BFF -> microservice with

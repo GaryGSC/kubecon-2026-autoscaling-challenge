@@ -14,7 +14,7 @@ spec:
   sources:
   - repoURL: https://github.com/depeche-io/kubecon-2026-autoscaling-challenge.git
     path: rounds/round4
-  # benchmark: bench-fast / bench-slow / bench-medium / bench-all CronJobs + the k6-bench ConfigMap
+  # benchmark: bench-fast / bench-slow / bench-all CronJobs + the k6-bench ConfigMap
   - repoURL: https://github.com/depeche-io/kubecon-2026-autoscaling-challenge.git
     path: gitops/charts/k6-bench
     helm:

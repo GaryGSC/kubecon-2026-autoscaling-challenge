@@ -1,5 +1,5 @@
 // k6 benchmark against the challenge app - TARGET is set per round namespace.
-// SCENARIO=fast|slow|medium|all - each scenario runs DURATION (constant VUs); "all" runs the three one after another.
+// SCENARIO=fast|slow|all - each scenario runs DURATION (constant VUs); "all" runs both one after another.
 // Profiles come from the chart values (env FAST_VUS, SLOW_MIN_WAIT, ... - defaults below match values.yaml).
 // The wait range is passed as ?minWait=<n>&maxWait=<n> (the app picks a random value in it); apps that ignore it (round 1 nginx) just answer.
 import http from 'k6/http';
@@ -11,12 +11,11 @@ const SCENARIO = __ENV.SCENARIO || 'all';
 const num = (name, fallback) => Number(__ENV[name] || fallback);
 
 // seconds per scenario
-const DURATION = num('DURATION', 90);
+const DURATION = num('DURATION', 120);
 
 const PROFILES = {
   fast: { vus: 20, minWait: 10, maxWait: 100 },
   slow: { vus: 5, minWait: 1000, maxWait: 3000 },
-  medium: { vus: 10, minWait: 200, maxWait: 1000 },
 };
 
 // apply env overrides: <PROFILE>_VUS, _MIN_WAIT, _MAX_WAIT
@@ -57,4 +56,3 @@ function hit(p) {
 
 export function fast() { hit(PROFILES.fast); }
 export function slow() { hit(PROFILES.slow); }
-export function medium() { hit(PROFILES.medium); }

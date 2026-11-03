@@ -9,7 +9,8 @@ data:
     error_log /dev/stderr warn;
 
     events {
-      worker_connections 1024;
+      # nginx default
+      worker_connections 512;
     }
 
     http {
