@@ -320,7 +320,7 @@ kubectl -n round2 create job --from=cronjob/bench-all bench-$(date +%s)
 
 ---
 
-# Round 1 · CPU HPA — setup
+# Round 1 · CPU HorizontalPodAutoscaler — setup
 
 <div class="grid grid-cols-[1fr_1fr] gap-8 mt-2">
 
