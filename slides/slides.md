@@ -568,6 +568,8 @@ Argo CD `challenge-round2` → `bench-all` → **Create Job** · Grafana `namesp
 
 # Round 2 · Go, 10 workers — results
 
+## Knative Details
+
 <Shot src="/results/round2.png" />
 
 ---
