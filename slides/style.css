@@ -1,43 +1,64 @@
-.slidev-layout {
-  background: #0d1117;
-  color: #e2e8f0;
-}
-
+/* KubeCon NA 2026 (Salt Lake City) look, taken from the session banner */
 :root {
-  --kcd-blue: #0086FF;
-  --kcd-blue-dark: #0066cc;
-  --kcd-ink: #0a0a0a;
-  --kcd-mute: #6b7280;
-  --kcd-warn: #f59e0b;
-  --kcd-danger: #ef4444;
-  --kcd-ok: #10b981;
+  --kc-navy: #113E82;
+  --kc-navy-dark: #0B2C60;
+  --kc-purple: #4B3587;
+  --kc-sky: #4E73A7;
+  --kc-lavender: #B9C6E8;
+  --kc-bee: #FEF35B;
+  --kc-blue: #0086FF;
+  --kc-warn: #f59e0b;
+  --kc-danger: #f87171;
+  --kc-ok: #34d399;
 }
 
-.slidev-layout h1 {
-  color: var(--kcd-blue);
+.slidev-layout {
+  background: var(--kc-navy) url('/theme/content-bg.jpg') center bottom / cover no-repeat;
+  color: #f1f5f9;
+  padding-bottom: 4.5rem;
+}
+
+.slidev-layout.section {
+  background: var(--kc-navy) url('/theme/section-bg.jpg') center / cover no-repeat;
+}
+
+.slidev-layout h1,
+.slidev-layout h2 {
+  font-family: 'Source Serif 4', Georgia, serif;
   font-weight: 700;
   letter-spacing: -0.01em;
 }
 
-.slidev-layout h2 {
-  color: var(--kcd-blue-dark);
-  font-weight: 600;
+.slidev-layout h1 { color: #fff; }
+.slidev-layout h2 { color: var(--kc-lavender); }
+.slidev-layout.section h1 { font-size: 3.6rem; }
+.slidev-layout.section h2 { font-size: 1.8rem; font-weight: 600; }
+
+.slidev-layout a { color: var(--kc-bee); }
+
+.slidev-layout table { font-size: 0.95rem; }
+.slidev-layout th { color: var(--kc-lavender); border-bottom-color: var(--kc-lavender); }
+.slidev-layout td, .slidev-layout th { border-color: rgba(185, 198, 232, 0.25); }
+
+code {
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
 }
 
-.slidev-layout.cover {
-  background: linear-gradient(135deg, var(--kcd-blue) 0%, #003a99 100%);
-  color: #fff;
+.slidev-layout :not(pre) > code {
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--kc-bee);
+  padding: 0.05rem 0.3rem;
+  border-radius: 3px;
 }
 
-.slidev-layout.cover h1,
-.slidev-layout.cover h2,
-.slidev-layout.cover p {
-  color: #fff;
+.slidev-layout pre.shiki {
+  background: var(--kc-navy-dark) !important;
+  border-radius: 6px;
 }
 
 .kcd-source {
   font-size: 0.7rem;
-  color: var(--kcd-mute);
+  color: var(--kc-lavender);
   font-style: italic;
   margin-top: 1.5rem;
 }
@@ -46,48 +67,52 @@
   display: inline-block;
   padding: 0.15rem 0.6rem;
   border-radius: 999px;
-  background: var(--kcd-blue);
+  background: var(--kc-purple);
   color: #fff;
   font-size: 0.8rem;
   font-weight: 600;
 }
 
-code {
-  font-family: 'JetBrains Mono', 'Fira Code', monospace;
-}
-
 .kcd-card {
-  background: #0a2540;
-  border-left: 4px solid var(--kcd-blue);
+  background: var(--kc-navy-dark);
+  border-left: 4px solid var(--kc-lavender);
   padding: 0.75rem 1rem;
   border-radius: 6px;
   color: #f1f5f9;
 }
 
-.kcd-card strong { color: #ffffff; }
-.kcd-card em { color: #b9d4ff; font-style: italic; }
-.kcd-card code {
-  background: rgba(255, 255, 255, 0.12);
-  color: #b9d4ff;
-  padding: 0.05rem 0.3rem;
-  border-radius: 3px;
-}
+.kcd-card strong { color: #fff; }
+.kcd-card em { color: var(--kc-lavender); }
 
-.kcd-card-ok     { border-left-color: var(--kcd-ok);     background: #052e22; }
-.kcd-card-warn   { border-left-color: var(--kcd-warn);   background: #3a2a05; }
-.kcd-card-danger { border-left-color: var(--kcd-danger); background: #3a0a0a; }
+.kcd-card-ok     { border-left-color: var(--kc-ok); }
+.kcd-card-warn   { border-left-color: var(--kc-warn); }
+.kcd-card-danger { border-left-color: var(--kc-danger); }
+.kcd-card-bee    { border-left-color: var(--kc-bee); }
+
+.guess {
+  background: var(--kc-purple);
+  border-left: 4px solid var(--kc-bee);
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+}
+.guess strong { color: var(--kc-bee); }
 
 .chat {
-  background: #0f172a;
+  background: var(--kc-navy-dark);
   border-radius: 8px;
   padding: 0.6rem 0.9rem;
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.85rem;
-  color: #e2e8f0;
-  border-left: 3px solid var(--kcd-blue);
+  color: #f1f5f9;
+  border-left: 3px solid var(--kc-lavender);
   margin-bottom: 0.4rem;
 }
-.chat .who { color: #94a3b8; font-weight: 600; margin-right: 0.4rem; }
-.chat .who.bot { color: var(--kcd-blue); }
-.chat .who.alert { color: var(--kcd-danger); }
-.chat .who.human { color: #fbbf24; }
+.chat .who { color: var(--kc-lavender); font-weight: 600; margin-right: 0.4rem; }
+.chat .who.bot { color: var(--kc-bee); }
+.chat .who.human { color: #fff; }
+
+.diagram-card {
+  background: #fff;
+  border-radius: 8px;
+  padding: 0.75rem;
+}
