@@ -79,6 +79,24 @@ the apps deploy lives in `gitops/manifests`; third-party Helm charts are referen
 
 The rounds are plain YAML too: apply one by hand with `kubectl apply -n <round> -f rounds/<round>` (e.g. `-n round2 -f rounds/round2`).
 
+### Improved state: branch `improved`
+
+The branch [`improved`](https://github.com/depeche-io/kubecon-2026-autoscaling-challenge/tree/improved) holds a tuned
+version of the rounds, to showcase the "after" state. It is always rebased on top of `main`
+(`git rebase main && git push --force-with-lease`), so it only adds the improvements.
+
+Nothing switches automatically - per round, point the round's source at the branch in Argo CD:
+
+- UI: app `challenge-<round>` -> *Details* -> *Sources* -> the `rounds/<round>` source -> *Edit* -> *Target revision* `improved` -> *Save* (auto-sync applies it)
+- CLI: `argocd app set challenge-round1-cpu --source-position 1 --revision improved`
+
+Switch back the same way with revision `main`. The root app ignores this field (`gitops/bootstrap/root.yaml`),
+so the manual switch sticks. The benchmark source stays on `main`.
+
+| Round | Improvement on `improved` |
+|---|---|
+| `round1-cpu` | no HPA; one bigger Pod: nginx `worker_processes 5`, 500m CPU |
+
 ## Container images
 
 | App | Image | Workflow |

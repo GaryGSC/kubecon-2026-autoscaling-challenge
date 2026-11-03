@@ -21,6 +21,42 @@ spec:
     kind: Application
     jsonPointers:
     - /status
+  # the round source's revision is switched by hand (main <-> improved, see README) - don't revert it
+  - group: argoproj.io
+    kind: Application
+    name: challenge-round1-cpu
+    jsonPointers:
+    - /spec/sources/0/targetRevision
+  - group: argoproj.io
+    kind: Application
+    name: challenge-round1-in-flight
+    jsonPointers:
+    - /spec/sources/0/targetRevision
+  - group: argoproj.io
+    kind: Application
+    name: challenge-round2
+    jsonPointers:
+    - /spec/sources/0/targetRevision
+  - group: argoproj.io
+    kind: Application
+    name: challenge-round3
+    jsonPointers:
+    - /spec/sources/0/targetRevision
+  - group: argoproj.io
+    kind: Application
+    name: challenge-round4
+    jsonPointers:
+    - /spec/sources/0/targetRevision
+  - group: argoproj.io
+    kind: Application
+    name: challenge-round5
+    jsonPointers:
+    - /spec/sources/0/targetRevision
+  - group: argoproj.io
+    kind: Application
+    name: challenge-round6
+    jsonPointers:
+    - /spec/sources/0/targetRevision
   syncPolicy:
     automated:
       allowEmpty: true
@@ -28,3 +64,4 @@ spec:
       selfHeal: true
     syncOptions:
     - allowEmpty=true
+    - RespectIgnoreDifferences=true
