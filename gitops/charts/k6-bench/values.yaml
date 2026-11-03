@@ -6,7 +6,7 @@ duration: 120
 
 scenarios:
   fast:
-    vus: 20
+    vus: 50
     minWait: 10
     maxWait: 100
   slow:

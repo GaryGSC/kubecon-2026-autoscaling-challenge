@@ -14,7 +14,7 @@ const num = (name, fallback) => Number(__ENV[name] || fallback);
 const DURATION = num('DURATION', 120);
 
 const PROFILES = {
-  fast: { vus: 20, minWait: 10, maxWait: 100 },
+  fast: { vus: 50, minWait: 10, maxWait: 100 },
   slow: { vus: 5, minWait: 1000, maxWait: 3000 },
 };
 

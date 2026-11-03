@@ -35,9 +35,9 @@ All scenarios call `http://app.<namespace>/?minWait=<min>&maxWait=<max>` (k6 `co
 
 | Scenario | Duration | Parallel (VUs) | `minWait` - `maxWait` (ms, random per request) |
 |---|---:|---:|---|
-| `fast` | 120 s | 20 | 10 - 100 |
+| `fast` | 120 s | 50 | 10 - 100 |
 | `slow` | 120 s | 5 | 1000 - 3000 |
-| `all` | both above one after another (fast, slow) = 240 s | 20 / 5 | mixed |
+| `all` | both above one after another (fast, slow) = 240 s | 50 / 5 | mixed |
 
 The profiles are values of the Helm chart (`gitops/charts/k6-bench/values.yaml`; override per round in the Application's `helm.valuesObject`).
 

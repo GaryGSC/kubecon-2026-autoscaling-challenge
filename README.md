@@ -104,7 +104,7 @@ The repo was built in one working session, starting from the session abstract:
   the same time in its own namespace and Argo CD app (`challenge-<round>`), together with its own benchmark CronJobs.
 - **Platform** - Argo CD with plain `Application` manifests, Istio + Knative, kube-prometheus-stack (no Alertmanager,
   5s scrapes for dense data). Everything single-instance to leave the CPU to the workloads. Public credentials.
-- **Benchmark** - k6 with two 120 s scenarios (fast 20 VUs, slow 5) plus `all` (both in series), as
+- **Benchmark** - k6 with two 120 s scenarios (fast 50 VUs, slow 5) plus `all` (both in series), as
   suspended CronJobs started from the Argo CD UI - no extra UI. Results go to Prometheus via remote write.
 - **Rounds** - nginx static (1), Go app with 10 workers (2), nginx + php-fpm as two containers in one Pod (3),
   Spring MVC with slow startup (4), scale to zero + `imagePullPolicy: Always` (5), BFF -> microservice with
