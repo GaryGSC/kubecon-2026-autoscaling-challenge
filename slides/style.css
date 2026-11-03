@@ -89,14 +89,6 @@ code {
 .kcd-card-danger { border-left-color: var(--kc-danger); }
 .kcd-card-bee    { border-left-color: var(--kc-bee); }
 
-.guess {
-  background: var(--kc-purple);
-  border-left: 4px solid var(--kc-bee);
-  padding: 0.75rem 1rem;
-  border-radius: 6px;
-}
-.guess strong { color: var(--kc-bee); }
-
 .chat {
   background: var(--kc-navy-dark);
   border-radius: 8px;
