@@ -225,15 +225,15 @@ All scenarios call `http://app.<namespace>/?minWait=<min>&maxWait=<max>` (k6 `co
 
 | Scenario | Duration | Parallel (VUs) | Wait per request |
 |---|---:|---:|---|
-| `fast` | 120 s | 20 | 10 – 100 ms |
+| `fast` | 120 s | 50 | 10 – 100 ms |
 | `slow` | 120 s | 5 | 1 – 3 s |
-| `all` | one after another, 240 s | 20 / 5 | mixed |
+| `all` | one after another, 240 s | 50 / 5 | mixed |
 
 <div class="grid grid-cols-2 gap-6 mt-6">
 
 <div class="kcd-card">
 
-**Closed model:** each VU sends the next request only after the answer → at most 20 requests in flight. A slow app gets *fewer* requests, not more.
+**Closed model:** each VU sends the next request only after the answer → at most 50 requests in flight. A slow app gets *fewer* requests, not more.
 
 </div>
 
@@ -449,7 +449,7 @@ autoscaling.knative.dev/max-scale: "10"
 
 <div class="text-xl mt-4 leading-loose">
 
-- 20 VUs, target 10 → how many Pods?
+- 50 VUs, target 10 → how many Pods?
 - Does CPU matter at all now?
 - Same app as `round1-cpu` — same result?
 
@@ -457,7 +457,7 @@ autoscaling.knative.dev/max-scale: "10"
 
 <div v-click class="guess mt-6">
 
-**My guess:** 2–3 Pods. Requests take ~1 ms, so few of them are *in flight* at once even with 20 VUs. The real target is 10 × 70 % (`target-utilization-percentage` default) = **7**. KPA reacts to load, not to CPU — the throttled nginx doesn't trigger anything.
+**My guess:** 2–3 Pods. Requests take ~1 ms, so few of them are *in flight* at once even with 50 VUs. The real target is 10 × 70 % (`target-utilization-percentage` default) = **7**. KPA reacts to load, not to CPU — the throttled nginx doesn't trigger anything.
 
 </div>
 
@@ -606,7 +606,7 @@ Think: a DB connection pool, a thread pool, a downstream API. The app is **full*
 <div class="text-xl mt-4 leading-loose">
 
 - What would a CPU HPA do here?
-- `fast`: 20 VUs × ~55 ms — how many Pods?
+- `fast`: 50 VUs × ~55 ms — how many Pods?
 - `slow`: 5 VUs × 1–3 s — queue or not?
 - Where do the requests wait?
 
@@ -614,7 +614,7 @@ Think: a DB connection pool, a thread pool, a downstream API. The app is **full*
 
 <div v-click class="guess mt-6">
 
-**My guess:** CPU stays near zero — a CPU HPA would **never** scale. Knative sees the requests in flight: ~3 Pods during `fast`, 1 Pod is enough for `slow` (5 in flight < 10 workers). p99 ≈ the wait itself, unless Pods arrive late.
+**My guess:** CPU stays near zero — a CPU HPA would **never** scale. Knative sees the requests in flight: ~7–8 Pods during `fast` (50 in flight ÷ 7), 1 Pod is enough for `slow` (5 in flight < 10 workers). p99 ≈ the wait itself, unless Pods arrive late.
 
 </div>
 
@@ -883,7 +883,7 @@ imagePullPolicy: Always
 
 <div v-click class="guess mt-6">
 
-**My guess:** 2–5 s for the first ~20 requests (one per VU) — registry round-trip × 3 images, container start, readiness. Images stay cached on one node, so this is the *good* case. p99 of a short run is mostly cold start.
+**My guess:** 2–5 s for the first ~50 requests (one per VU) — registry round-trip × 3 images, container start, readiness. Images stay cached on one node, so this is the *good* case. p99 of a short run is mostly cold start.
 
 </div>
 
