@@ -715,8 +715,12 @@ Status `0` = no response within the 5 s k6 timeout — during `slow`, only 5 par
 
 <div class="text-sm opacity-80 -mt-2 mb-2">How "full" the system is</div>
 
-<div class="h-32"><Shot src="/results/round3-5.png" /></div>
-<div class="h-56 mt-2"><Shot src="/results/round3-6.png" /></div>
+<div class="h-28"><Shot src="/results/round3-5.png" /></div>
+
+<div class="grid grid-cols-2 gap-4 mt-2">
+<div class="h-52"><Shot src="/results/round3-6.png" /></div>
+<div class="h-52"><Shot src="/results/round3-7.png" /></div>
+</div>
 
 ---
 
