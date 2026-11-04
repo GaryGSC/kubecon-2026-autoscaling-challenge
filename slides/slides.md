@@ -295,10 +295,6 @@ Good autoscaling = <strong>users don't notice</strong> and you <strong>don't pay
 5. **Tune it** — one knob at a time
 6. **Rerun**
 
-```bash
-kubectl -n round2 create job --from=cronjob/bench-all bench-$(date +%s)
-```
-
 </div>
 
 
