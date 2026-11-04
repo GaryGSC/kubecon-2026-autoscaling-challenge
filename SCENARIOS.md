@@ -61,7 +61,7 @@ nginx serves the same static page for any `?minWait=&maxWait=` (the requested wa
 
 ### Round 3 - nginx + php-fpm, two containers in one Pod
 
-[app-php](app-php/): nginx and php-fpm (`pm = static`, `FPM_WORKERS=5`, on purpose half of the Knative target 10) are two containers of the same Pod - they always scale together. Excess requests wait in the php-fpm listen backlog.
+[app-php](app-php/): nginx and php-fpm (`pm = static`, `FPM_WORKERS=2`, on purpose far below the Knative target 10) are two containers of the same Pod - they always scale together. Excess requests wait in the php-fpm listen backlog.
 
 - Lesson: the Pod is the scaling unit - nginx and php-fpm always scale together, and a CPU-based autoscaler would average over *all* containers' requests (sidecars and the idle nginx dilute the signal).
 - Watch: *php-fpm busy vs. capacity*, *php-fpm listen queue*, nginx *Requests by response code*.

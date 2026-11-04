@@ -42,9 +42,9 @@ spec:
       - name: php-fpm
         image: ghcr.io/depeche-io/kubecon-2026-autoscaling-challenge/app-php:main
         env:
-        # on purpose: 5 workers vs. Knative target 10 - half the requests queue in the listen backlog
+        # on purpose: 2 workers vs. Knative target 10 - most requests queue in the listen backlog
         - name: FPM_WORKERS
-          value: "5"
+          value: "2"
         resources:
           requests:
             cpu: 50m
