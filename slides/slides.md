@@ -978,6 +978,12 @@ Argo CD `challenge-round5` → wait for 0 Pods → `bench-all` → **Create Job*
 
 </div>
 
+<div class="kcd-card kcd-card-bee mt-4 text-sm">
+
+**Knative benefits from the queue vs. HPA** — the activator holds the first request while a Pod starts. HPA has no queue: with 0 Pods the request just fails.
+
+</div>
+
 ---
 
 # Round 6 · BFF → backend — setup
