@@ -1,5 +1,6 @@
 # Vendored from https://github.com/knative-extensions/net-istio/releases/download/knative-v1.24.0/net-istio.yaml
-# (Knative net-istio v1.24.0, needs the Istio CRDs from platform-istio). No local edits - to upgrade, replace the file.
+# (Knative net-istio v1.24.0, needs the Istio CRDs from platform-istio). To upgrade, replace the file and repeat the local edit:
+# - CPU requests 30m / 20m -> 10m (controller / webhook) - low requests on purpose for a tiny tutorial node.
 #
 # Generated when HEAD was f2edebf8ad40035a83077ad4058d9ac5de2faeae
 #
@@ -369,7 +370,7 @@ spec:
           image: gcr.io/knative-releases/knative.dev/net-istio/cmd/controller@sha256:2148886f0540a9bfda5b252150f714e1bbe5afa13203b517b5657104459cde7a
           resources:
             requests:
-              cpu: 30m
+              cpu: 10m
               memory: 40Mi
             limits:
               cpu: 300m
@@ -469,7 +470,7 @@ spec:
           image: gcr.io/knative-releases/knative.dev/net-istio/cmd/webhook@sha256:ea6c9494a8eb2686e6186086201754323492480bc52f6a8d74a91bfecbfa7665
           resources:
             requests:
-              cpu: 20m
+              cpu: 10m
               memory: 20Mi
             limits:
               cpu: 200m

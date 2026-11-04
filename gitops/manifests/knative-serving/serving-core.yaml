@@ -7,6 +7,8 @@
 # - config-domain: added the 127.0.0.1.sslip.io domain
 # - config-observability: added the Prometheus metrics settings
 # - autoscaler, controller, webhook: memory request 100Mi -> 40Mi (they use ~25-35Mi on the single-node setup)
+# - CPU requests: activator 300m -> 20m, autoscaler, controller, webhook 100m -> 10m (low requests on purpose - a tiny
+#   tutorial node must not refuse Pods over CPU requests; actual use peaks at 5-30m)
 #
 # Copyright 2018 The Knative Authors
 #
@@ -8806,7 +8808,7 @@ spec:
           # https://github.com/knative/serving/issues/1625#issuecomment-511930023
           resources:
             requests:
-              cpu: 300m
+              cpu: 20m
               memory: 60Mi
             limits:
               cpu: 1000m
@@ -8960,7 +8962,7 @@ spec:
           image: gcr.io/knative-releases/knative.dev/serving/cmd/autoscaler@sha256:0fcd0d222ea7a8c6628136cd516e7ff1f4cab5a736445abdfd6a9ebc004b8dff
           resources:
             requests:
-              cpu: 100m
+              cpu: 10m
               memory: 40Mi
             limits:
               cpu: 1000m
@@ -9085,7 +9087,7 @@ spec:
           image: gcr.io/knative-releases/knative.dev/serving/cmd/controller@sha256:9bf7db638f617e2d8086919cece028bb6b7598449039bc8eb4018cc599c324c4
           resources:
             requests:
-              cpu: 100m
+              cpu: 10m
               memory: 40Mi
             limits:
               cpu: 1000m
@@ -9212,7 +9214,7 @@ spec:
           image: gcr.io/knative-releases/knative.dev/serving/cmd/webhook@sha256:7cc4b7bc704086497cf2b5733e20856f6e2d8c95822212d1e06f1fb8697c9a08
           resources:
             requests:
-              cpu: 100m
+              cpu: 10m
               memory: 40Mi
             limits:
               cpu: 500m

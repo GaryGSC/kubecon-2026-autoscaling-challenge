@@ -29,8 +29,8 @@ spec:
         replicaCount: 1
         resources:
           requests:
-            cpu: 50m
-            # uses ~50Mi on the single-node setup
+            # uses ~10m CPU, ~50Mi on the single-node setup
+            cpu: 10m
             memory: 64Mi
   - repoURL: https://istio-release.storage.googleapis.com/charts
     chart: gateway
@@ -44,8 +44,8 @@ spec:
         replicaCount: 1
         resources:
           requests:
-            cpu: 100m
-            # uses ~60-70Mi
+            # uses ~10m CPU, ~60-70Mi
+            cpu: 10m
             memory: 80Mi
           limits:
             cpu: "2"
