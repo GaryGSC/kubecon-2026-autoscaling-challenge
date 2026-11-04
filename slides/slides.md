@@ -1068,6 +1068,34 @@ Argo CD `challenge-round6` → `bench-all` → **Create Job** · Grafana `namesp
 
 ---
 
+# Round 6 · BFF → backend — results
+
+## Fast OK, Slow fail
+
+<div class="grid grid-cols-2 gap-6">
+
+<div>
+<div class="text-lg font-bold text-[#B9C6E8]">Fast <span class="text-sm font-normal">10–100 ms</span></div>
+<div class="h-60"><Shot src="/results/round6-5.png" /></div>
+</div>
+
+<div>
+<div class="text-lg font-bold text-[#B9C6E8]">Slow <span class="text-sm font-normal">1–3 s</span></div>
+<div class="h-60"><Shot src="/results/round6-6.png" /></div>
+</div>
+
+</div>
+
+<div class="kcd-card kcd-card-warn text-sm -mt-8">
+
+- backend (`work`) deadline **2.5 s**, but `slow` waits up to 3 s → ~25 % of requests run out of time
+- **`504` Gateway Timeout** — the backend hit its own 2.5 s deadline
+- **`502` Bad Gateway** — the BFF got that `504` from upstream and passes it on (its own 3 s deadline never fires)
+
+</div>
+
+---
+
 # Round 6 · BFF → backend — how to improve
 
 <div class="grid grid-cols-2 gap-8 mt-4">
