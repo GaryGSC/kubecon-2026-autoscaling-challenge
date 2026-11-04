@@ -643,7 +643,7 @@ Argo CD `challenge-round2` → `bench-all` → **Create Job** · Grafana `namesp
 k6 client   50 parallel (fast), then 5 (slow)
    │
    ▼
-Pod                       requests
+Pod  (Knative target 10)  requests
 ├── queue-proxy (Knative)
 ├── nginx      :8080 ─┐     25m   (512 connections, default)
 └── php-fpm    :9000 ◄┘     50m   (2 workers!)
