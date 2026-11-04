@@ -701,6 +701,26 @@ The exporter asks php-fpm for `/fpm-status` — and a php-fpm worker serves that
 
 ---
 
+# Round 3 · nginx + php-fpm — results
+
+## Failed requests!
+
+<div class="h-40"><Shot src="/results/round3-3.png" /></div>
+
+<div class="grid grid-cols-[1fr_1fr] gap-6 mt-3 items-center">
+
+<div class="h-48"><Shot src="/results/round3-4.png" /></div>
+
+<div class="kcd-card kcd-card-warn text-sm">
+
+Status `0` = no response within the 5 s k6 timeout — during `slow`, only 5 parallel requests.
+
+</div>
+
+</div>
+
+---
+
 # Round 3 · nginx + php-fpm — how to improve
 
 <div class="grid grid-cols-2 gap-8 mt-4">
