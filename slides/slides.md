@@ -288,12 +288,11 @@ Good autoscaling = <strong>users don't notice</strong> and you <strong>don't pay
 <div class="mt-4">
 
 1. **Pick** the round — open its Argo CD app
-2. **Tune** — autoscaling resource → *Live manifest* → *Edit*<br/>
+2. **Run** — CronJob `bench-all` → *⋯* → **Create Job**
+3. **Read** — Grafana, `namespace` = the round
+4. **Tune** — autoscaling resource → *Live manifest* → *Edit*<br/>
    <span class="text-sm opacity-80">self-heal is off; *Sync* resets the round</span>
-3. **Run** — CronJob `bench-all` → *⋯* → **Create Job**
-4. **Read** — Grafana, `namespace` = the round
-5. **Adjust** — one knob at a time
-6. **Rerun**
+5. **Rerun**
 
 </div>
 
