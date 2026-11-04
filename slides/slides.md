@@ -871,6 +871,7 @@ Argo CD `challenge-round4` → `bench-all` → **Create Job** · Grafana `namesp
 
 - more CPU during startup (no limit, in-place resize)
 - shorter warm-up — cache from a shared store, CDS / CRaC
+- **GraalVM** native image — starts in milliseconds, no JIT warm-up
 - startup time is part of your scaling budget — **measure it**
 
 </div>
