@@ -29,7 +29,7 @@ spec:
         - name: TIMEOUT_MS
           value: "3000"
         - name: BACKEND_TIMEOUT_MS
-          value: "2500"
+          value: "3100"
         ports:
         - containerPort: 8080
         readinessProbe:
