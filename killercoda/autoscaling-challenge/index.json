@@ -9,8 +9,32 @@
     },
     "steps": [
       {
-        "title": "Explore the platform",
+        "title": "The platform and the benchmark",
         "text": "step1.md"
+      },
+      {
+        "title": "Round 1 - CPU HPA",
+        "text": "step2.md"
+      },
+      {
+        "title": "Knative + Round 2 - Go Demo App",
+        "text": "step3.md"
+      },
+      {
+        "title": "Round 3 - nginx + php-fpm",
+        "text": "step4.md"
+      },
+      {
+        "title": "Round 4 - Spring MVC",
+        "text": "step5.md"
+      },
+      {
+        "title": "Round 5 - scale to zero",
+        "text": "step6.md"
+      },
+      {
+        "title": "Round 6 - BFF -> backend",
+        "text": "step7.md"
       }
     ],
     "finish": {

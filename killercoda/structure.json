@@ -1,0 +1,7 @@
+{
+  "title": "Kubernetes Autoscaling",
+  "description": "KubeCon + CloudNativeCon North America 2026 - Autoscaling Reality Check: The Hands-On HTTP Optimization Challenge",
+  "items": [
+    { "path": "autoscaling-challenge" }
+  ]
+}
