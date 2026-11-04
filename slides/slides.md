@@ -687,12 +687,6 @@ Argo CD `challenge-round3` → `bench-all` → **Create Job** · Grafana `namesp
 
 <div class="h-70"><Shot src="/results/round3-2.png" /></div>
 
-<div class="kcd-card kcd-card-bee mt-3 text-sm">
-
-The exporter asks php-fpm for `/fpm-status` — and a php-fpm worker serves that request. It counts itself as busy.
-
-</div>
-
 ---
 
 # Round 3 · nginx + php-fpm — results
