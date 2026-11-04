@@ -836,7 +836,14 @@ Argo CD `challenge-round4` → `bench-all` → **Create Job** · Grafana `namesp
 
 # Round 4 · Spring MVC — results
 
-<Shot src="/results/round4.png" />
+## What does slow startup mean?
+
+<div class="grid grid-cols-[2fr_1fr] gap-4 mt-2">
+<div class="h-40"><Shot src="/results/round4-1.png" /></div>
+<div class="h-40"><Shot src="/results/round4-2.png" /></div>
+</div>
+
+<div class="h-44 mt-2"><Shot src="/results/round4-3.png" /></div>
 
 ---
 
