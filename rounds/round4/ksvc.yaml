@@ -12,6 +12,8 @@ spec:
         autoscaling.knative.dev/metric: concurrency
         # requests in flight per Pod the autoscaler aims for
         autoscaling.knative.dev/target: "10"
+        # scale out at 20% of target (2 in flight) instead of the default 70% - Pods take ~50 s to get Ready
+        autoscaling.knative.dev/target-utilization-percentage: "20"
         autoscaling.knative.dev/window: "60s"
         autoscaling.knative.dev/min-scale: "1"
         autoscaling.knative.dev/max-scale: "10"
