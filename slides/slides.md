@@ -724,6 +724,28 @@ Status `0` = no response within the 5 s k6 timeout — during `slow`, only 5 par
 
 ---
 
+# Round 3 · nginx + php-fpm — results
+
+## Which latency is correct?
+
+<div class="text-sm opacity-80 -mt-2 mb-2">Where do the requests go if the client timeouts?</div>
+
+<div class="grid grid-cols-2 gap-6">
+
+<div>
+<div class="text-lg font-bold text-[#B9C6E8]">Client <span class="text-sm font-normal">k6</span></div>
+<div class="h-76"><Shot src="/results/round3-8.png" /></div>
+</div>
+
+<div>
+<div class="text-lg font-bold text-[#B9C6E8]">Server <span class="text-sm font-normal">Knative queue-proxy</span></div>
+<div class="h-76"><Shot src="/results/round3-9.png" /></div>
+</div>
+
+</div>
+
+---
+
 # Round 3 · nginx + php-fpm — how to improve
 
 <div class="grid grid-cols-2 gap-8 mt-4">
