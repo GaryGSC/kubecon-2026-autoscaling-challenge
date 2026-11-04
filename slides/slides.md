@@ -792,7 +792,6 @@ Status `0` = no response within the 5 s k6 timeout — during `slow`, only 5 par
 - Spring MVC, `TOMCAT_THREADS=10` + accept queue
 - JVM start under a **500m CPU limit**
 - `STARTUP_DELAY_SECONDS=30` warm-up before readiness
-- requests `125m` / `96Mi`, limits `500m` / `384Mi`
 - Knative, target 10
 
 </div>
