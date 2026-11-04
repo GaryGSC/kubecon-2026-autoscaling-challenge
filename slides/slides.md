@@ -500,7 +500,7 @@ Panic is Knative's answer to bursts: react within seconds, then hold the Pods. H
 
 ---
 
-# Round 2 · Go, 10 workers — setup
+# Round 2 · Go Demo App — setup
 
 <div class="grid grid-cols-[1fr_1fr] gap-8 mt-2">
 
@@ -513,14 +513,29 @@ time.Sleep(rand(minWait..maxWait))  // I/O-like wait, no CPU
 ```
 
 - 10 requests in flight per Pod, the rest **queue** inside the app
-- requests `50m`, limits `200m`
 - Knative, target 10, min 1, max 10
 
 </div>
 
-<div class="kcd-card kcd-card-warn">
+<div>
+
+```yaml
+# rounds/round2/ksvc.yaml
+annotations:
+  autoscaling.knative.dev/class: kpa.autoscaling.knative.dev
+  autoscaling.knative.dev/metric: concurrency
+  # requests in flight per Pod the autoscaler aims for
+  autoscaling.knative.dev/target: "10"
+  autoscaling.knative.dev/window: "60s"
+  autoscaling.knative.dev/min-scale: "1"
+  autoscaling.knative.dev/max-scale: "10"
+```
+
+<div class="kcd-card kcd-card-warn mt-3">
 
 Think: a DB connection pool, a thread pool, a downstream API. The app is **full** long before the CPU is busy.
+
+</div>
 
 </div>
 
