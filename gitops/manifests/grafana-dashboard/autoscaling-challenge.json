@@ -1862,6 +1862,122 @@
       ]
     },
     {
+      "type": "timeseries",
+      "title": "Busy workers vs. capacity by Service",
+      "id": 38,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "description": "Same as above, split per Knative Service (round 6: BFF \"app\" vs. \"backend\") - which tier saturates first. Service is taken from the Pod name.",
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 90
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "custom": {
+            "lineWidth": 2,
+            "fillOpacity": 0,
+            "stacking": {
+              "mode": "none"
+            },
+            "showPoints": "never"
+          },
+          "min": 0
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byRegexp",
+              "options": ".* capacity"
+            },
+            "properties": [
+              {
+                "id": "custom.lineStyle",
+                "value": {
+                  "fill": "dash",
+                  "dash": [
+                    10,
+                    10
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "sum by (service) (label_replace(app_requests_in_flight{k8s_cluster=~\"$k8s_cluster\",namespace=\"$namespace\"}, \"service\", \"$1\", \"pod\", \"(.+?)(?:-[0-9]{5}-deployment)?-[a-z0-9]+-[a-z0-9]+\"))",
+          "legendFormat": "{{service}} Go busy",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          }
+        },
+        {
+          "refId": "B",
+          "expr": "sum by (service) (label_replace(app_workers{k8s_cluster=~\"$k8s_cluster\",namespace=\"$namespace\"}, \"service\", \"$1\", \"pod\", \"(.+?)(?:-[0-9]{5}-deployment)?-[a-z0-9]+-[a-z0-9]+\"))",
+          "legendFormat": "{{service}} Go capacity",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          }
+        },
+        {
+          "refId": "C",
+          "expr": "sum by (service) (label_replace(phpfpm_active_processes{k8s_cluster=~\"$k8s_cluster\",namespace=\"$namespace\"}, \"service\", \"$1\", \"pod\", \"(.+?)(?:-[0-9]{5}-deployment)?-[a-z0-9]+-[a-z0-9]+\"))",
+          "legendFormat": "{{service}} php-fpm busy",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          }
+        },
+        {
+          "refId": "D",
+          "expr": "sum by (service) (label_replace(phpfpm_total_processes{k8s_cluster=~\"$k8s_cluster\",namespace=\"$namespace\"}, \"service\", \"$1\", \"pod\", \"(.+?)(?:-[0-9]{5}-deployment)?-[a-z0-9]+-[a-z0-9]+\"))",
+          "legendFormat": "{{service}} php-fpm capacity",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          }
+        },
+        {
+          "refId": "E",
+          "expr": "sum by (service) (label_replace(tomcat_threads_busy_threads{k8s_cluster=~\"$k8s_cluster\",namespace=\"$namespace\"}, \"service\", \"$1\", \"pod\", \"(.+?)(?:-[0-9]{5}-deployment)?-[a-z0-9]+-[a-z0-9]+\"))",
+          "legendFormat": "{{service}} Tomcat busy",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          }
+        },
+        {
+          "refId": "F",
+          "expr": "sum by (service) (label_replace(tomcat_threads_config_max_threads{k8s_cluster=~\"$k8s_cluster\",namespace=\"$namespace\"}, \"service\", \"$1\", \"pod\", \"(.+?)(?:-[0-9]{5}-deployment)?-[a-z0-9]+-[a-z0-9]+\"))",
+          "legendFormat": "{{service}} Tomcat capacity",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          }
+        }
+      ]
+    },
+    {
       "type": "row",
       "title": "Knative (Knative rounds only)",
       "collapsed": false,
@@ -1870,7 +1986,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 90
+        "y": 98
       },
       "panels": []
     },
@@ -1887,7 +2003,7 @@
         "h": 8,
         "w": 8,
         "x": 0,
-        "y": 91
+        "y": 99
       },
       "fieldConfig": {
         "defaults": {
@@ -1975,7 +2091,7 @@
         "h": 8,
         "w": 8,
         "x": 8,
-        "y": 91
+        "y": 99
       },
       "fieldConfig": {
         "defaults": {
@@ -2045,7 +2161,7 @@
         "h": 8,
         "w": 8,
         "x": 16,
-        "y": 91
+        "y": 99
       },
       "fieldConfig": {
         "defaults": {
@@ -2096,7 +2212,7 @@
         "h": 8,
         "w": 8,
         "x": 0,
-        "y": 99
+        "y": 107
       },
       "fieldConfig": {
         "defaults": {
@@ -2194,7 +2310,7 @@
         "h": 8,
         "w": 8,
         "x": 8,
-        "y": 99
+        "y": 107
       },
       "fieldConfig": {
         "defaults": {
@@ -2264,7 +2380,7 @@
         "h": 8,
         "w": 8,
         "x": 16,
-        "y": 99
+        "y": 107
       },
       "fieldConfig": {
         "defaults": {
