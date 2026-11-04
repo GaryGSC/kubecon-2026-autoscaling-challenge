@@ -953,7 +953,9 @@ Argo CD `challenge-round5` → wait for 0 Pods → `bench-all` → **Create Job*
 
 # Round 5 · scale to zero — results
 
-<Shot src="/results/round5.png" />
+## Not bad, but ...
+
+<div class="h-96 mt-2"><Shot src="/results/round5-1.png" /></div>
 
 ---
 
