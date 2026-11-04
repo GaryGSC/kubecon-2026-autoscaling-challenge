@@ -83,10 +83,58 @@ spec:
               - action: replace
                 targetLabel: k8s_cluster
                 replacement: k3d-autoscaling
+            # leaderboard: every cluster remote-writes the dashboard metrics to the central Prometheus.
+            # Unique cluster ID = this Prometheus Pod's UID (changes when the Pod is recreated),
+            # sent as k8s_cluster=k3d-<first 8 chars> - locally k8s_cluster stays k3d-autoscaling.
+            containers:
+            - name: prometheus
+              env:
+              - name: POD_UID
+                valueFrom:
+                  fieldRef:
+                    fieldPath: metadata.uid
+            # Prometheus expands ${VAR} in external labels; they are only attached to remote-written samples
+            externalLabels:
+              leaderboard_id: ${POD_UID}
+            remoteWrite:
+            - url: https://prometheus-write.depeche.io/api/v1/write
+              basicAuth:
+                username:
+                  name: leaderboard-remote-write
+                  key: username
+                password:
+                  name: leaderboard-remote-write
+                  key: password
+              # k6_http_req_duration_seconds is a native histogram
+              sendNativeHistograms: true
+              # runs after external labels are attached
+              writeRelabelConfigs:
+              # only what the dashboard queries
+              - action: keep
+                sourceLabels: [__name__]
+                regex: kube_pod_info|kube_pod_status_phase|kube_pod_status_ready|kube_pod_status_ready_time|kube_pod_created|kube_pod_container_resource_(limits|requests)|container_cpu_usage_seconds_total|container_memory_working_set_bytes|k6_.*|kn_revision_.*|kn_serving_.*|nginx_connections_.*|nginxlog_.*|phpfpm_.*|tomcat_threads_.*|app_.*
+              - action: replace
+                sourceLabels: [leaderboard_id]
+                regex: (.{8}).*
+                targetLabel: k8s_cluster
+                replacement: k3d-$1
+              - action: labeldrop
+                regex: leaderboard_id|prometheus|prometheus_replica
             # pick up ServiceMonitors / PodMonitors / rules from any namespace
             serviceMonitorSelectorNilUsesHelmValues: false
             podMonitorSelectorNilUsesHelmValues: false
             ruleSelectorNilUsesHelmValues: false
+
+        # leaderboard remote-write credentials (temporary, shared by all attendees)
+        extraManifests:
+        - apiVersion: v1
+          kind: Secret
+          metadata:
+            name: leaderboard-remote-write
+          type: Opaque
+          stringData:
+            username: writer
+            password: 29db3525c1d2d032e11d1862057c28e9
 
   # Grafana dashboard ConfigMap (Kustomize configMapGenerator from autoscaling-challenge.json, picked up by the Grafana sidecar)
   - repoURL: https://github.com/depeche-io/kubecon-2026-autoscaling-challenge.git

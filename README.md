@@ -134,17 +134,18 @@ The repo was built in one working session, starting from the session abstract:
 - **Observability** - one Grafana dashboard (resources, k6 client view, availability / latency / CPU & memory
   efficiency / Pod count, nginx, app workers & queues, Knative autoscaler and queue-proxy) and per-round PodMonitors.
 
-### Leaderboard (planned)
+### Leaderboard
 
-Each attendee's local Prometheus will **remote-write to a central Prometheus/Grafana** so all runs can be compared
-in one leaderboard dashboard. Draft ranking: availability >= 99.9 % (gate), then lowest p99, then fewest avg. app Pods.
+Each attendee's local Prometheus **remote-writes to a central Prometheus** (`https://prometheus-write.depeche.io`,
+only `/api/v1/write`, basic auth) so all runs can be compared in one Grafana (`https://grafana-write.depeche.io`,
+same dashboard, imported manually). Draft ranking: availability >= 99.9 % (gate), then lowest p99, then fewest avg. app Pods.
 
-Needed for that:
-
-- a unique `k8s_cluster` value per attendee (today hardcoded to `k3d-autoscaling` in the scrape class and the k6 tags)
-- `remoteWrite` in the kube-prometheus-stack values (endpoint + credentials), probably filtered to k6 and a few
-  recording rules to keep the traffic small on conference Wi-Fi
-- the central stack itself and a leaderboard dashboard
+- configured in `gitops/applications/platform-kube-prometheus-stack.yaml` (`prometheusSpec.remoteWrite`) - nothing to run
+- only the metrics the dashboard queries are sent (`writeRelabelConfigs` keep list)
+- unique cluster ID: the Prometheus Pod UID (`POD_UID` env -> external label), sent as `k8s_cluster=k3d-<first 8 chars>`;
+  it changes when the Prometheus Pod is recreated. Locally `k8s_cluster` stays `k3d-autoscaling`.
+- the credentials are temporary and shared by everyone (write-only endpoint)
+- the central stack lives in the digirocz infra repo (`kps-write` in namespace `monitoring-write`)
 
 ### What is missing / not verified yet
 
