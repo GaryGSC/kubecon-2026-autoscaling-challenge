@@ -1121,6 +1121,28 @@ Argo CD `challenge-round6` → `bench-all` → **Create Job** · Grafana `namesp
 
 ---
 
+# Round 6 · Improved — before vs. after
+
+<div class="grid grid-cols-[auto_5fr_2fr] gap-x-6 gap-y-3 items-center mt-2">
+
+<div class="text-lg font-bold text-[#B9C6E8]">Before<br/><span class="text-sm font-normal">backend 2.5 s</span></div>
+<div class="h-44"><Shot src="/results/round6-improved-before-1.png" /></div>
+<div class="h-44"><Shot src="/results/round6-improved-before-2.png" /></div>
+
+<div class="text-lg font-bold text-[#B9C6E8]">Improved<br/><span class="text-sm font-normal">backend 3.1 s</span></div>
+<div class="h-44"><Shot src="/results/round6-improved-after-1.png" /></div>
+<div class="h-44"><Shot src="/results/round6-improved-after-2.png" /></div>
+
+</div>
+
+<div class="kcd-card kcd-card-warn text-sm -mt-4">
+
+**But** BFF (1–3 s) + backend (1–3 s) = 2–6 s > **5 s timeout on the client**
+
+</div>
+
+---
+
 # Leaderboard 🏆
 
 <div class="mt-6 text-xl">
