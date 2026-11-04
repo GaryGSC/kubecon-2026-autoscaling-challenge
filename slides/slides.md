@@ -306,7 +306,7 @@ Good autoscaling = <strong>users don't notice</strong> and you <strong>don't pay
 
 <div>
 
-- `nginx:1.29-alpine`, the same static page for any `?minWait=&maxWait=` — the waits are **ignored**
+- `nginx:1.29-alpine` static page — *the waits are ignored*
 - nginx: requests `25m`, limits `100m`
 - plain Deployment + Service, no Knative
 
