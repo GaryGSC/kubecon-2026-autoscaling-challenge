@@ -1050,6 +1050,12 @@ Argo CD `challenge-round6` → `bench-all` → **Create Job** · Grafana `namesp
 
 ---
 
+# So autoscaling is easy, right?
+
+<div class="h-100 mt-2"><Shot src="/results/real-world-day.png" /></div>
+
+---
+
 # Takeaways
 
 <div class="mt-6 text-xl leading-relaxed">
