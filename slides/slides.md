@@ -683,12 +683,6 @@ Argo CD `challenge-round3` → `bench-all` → **Create Job** · Grafana `namesp
 
 # Round 3 · nginx + php-fpm — results
 
-<Shot src="/results/round3.png" />
-
----
-
-# Round 3 · nginx + php-fpm — results
-
 ## Why is 1 worker busy all the time?
 
 <div class="h-70"><Shot src="/results/round3-2.png" /></div>
