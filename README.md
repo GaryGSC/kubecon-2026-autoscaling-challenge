@@ -97,6 +97,7 @@ so the manual switch sticks. The benchmark source stays on `main`.
 |---|---|
 | `round1-cpu` | no HPA; one bigger Pod: nginx `worker_processes 5`, 500m CPU |
 | `round2` | faster scale down: Knative stable `window` 20s instead of 60s |
+| `round3` | Knative `target` 2 instead of 10 = the 2 php-fpm workers |
 
 ## Container images
 
