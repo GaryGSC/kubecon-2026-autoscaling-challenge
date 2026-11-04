@@ -10,8 +10,8 @@ spec:
       annotations:
         autoscaling.knative.dev/class: kpa.autoscaling.knative.dev
         autoscaling.knative.dev/metric: concurrency
-        # requests in flight per Pod the autoscaler aims for
-        autoscaling.knative.dev/target: "10"
+        # requests in flight per Pod the autoscaler aims for - matches the 2 php-fpm workers
+        autoscaling.knative.dev/target: "2"
         autoscaling.knative.dev/window: "60s"
         autoscaling.knative.dev/min-scale: "1"
         autoscaling.knative.dev/max-scale: "10"
@@ -42,7 +42,7 @@ spec:
       - name: php-fpm
         image: ghcr.io/depeche-io/kubecon-2026-autoscaling-challenge/app-php:main
         env:
-        # on purpose: 2 workers vs. Knative target 10 - most requests queue in the listen backlog
+        # 2 workers = Knative target 2 - Knative scales out instead of queueing in the listen backlog
         - name: FPM_WORKERS
           value: "2"
         resources:
