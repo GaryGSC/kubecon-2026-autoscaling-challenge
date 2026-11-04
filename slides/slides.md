@@ -1045,7 +1045,18 @@ Argo CD `challenge-round6` → `bench-all` → **Create Job** · Grafana `namesp
 
 # Round 6 · BFF → backend — results
 
-<Shot src="/results/round6.png" />
+## Why do we have errors on slow requests?
+
+<div class="grid grid-cols-[1fr_2fr] gap-4 mt-2 items-center">
+
+<div class="h-112"><Shot src="/results/round6-1.png" /></div>
+
+<div>
+<div class="h-56"><Shot src="/results/round6-2.png" /></div>
+<div class="h-56"><Shot src="/results/round6-3.png" /></div>
+</div>
+
+</div>
 
 ---
 
