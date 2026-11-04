@@ -510,7 +510,7 @@ Panic is Knative's answer to bursts: react within seconds, then hold the Pods. H
 
 # Round 2 · Go Demo App — setup
 
-<div class="grid grid-cols-[1fr_1fr] gap-8 mt-2">
+<div class="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-8 mt-2" style="--slidev-code-font-size: 10px">
 
 <div>
 
@@ -1057,11 +1057,11 @@ Argo CD `challenge-round6` → `bench-all` → **Create Job** · Grafana `namesp
 
 <div class="grid grid-cols-[1fr_2fr] gap-4 mt-2 items-center">
 
-<div class="h-112"><Shot src="/results/round6-1.png" /></div>
+<div class="h-96"><Shot src="/results/round6-1.png" /></div>
 
 <div>
-<div class="h-56"><Shot src="/results/round6-2.png" /></div>
-<div class="h-56"><Shot src="/results/round6-3.png" /></div>
+<div class="h-48"><Shot src="/results/round6-2.png" /></div>
+<div class="h-48"><Shot src="/results/round6-3.png" /></div>
 </div>
 
 </div>
@@ -1072,7 +1072,7 @@ Argo CD `challenge-round6` → `bench-all` → **Create Job** · Grafana `namesp
 
 ## Twice the problem…
 
-<div class="h-[30rem] mt-0"><Shot src="/results/round6-4.png" /></div>
+<div class="h-[26rem] mt-0"><Shot src="/results/round6-4.png" /></div>
 
 ---
 
