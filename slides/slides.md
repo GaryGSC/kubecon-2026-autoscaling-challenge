@@ -1060,6 +1060,14 @@ Argo CD `challenge-round6` → `bench-all` → **Create Job** · Grafana `namesp
 
 ---
 
+# Round 6 · BFF → backend — results
+
+## Twice the problem ...
+
+<div class="h-[30rem] mt-0"><Shot src="/results/round6-4.png" /></div>
+
+---
+
 # Round 6 · BFF → backend — how to improve
 
 <div class="grid grid-cols-2 gap-8 mt-4">
