@@ -721,6 +721,17 @@ Status `0` = no response within the 5 s k6 timeout — during `slow`, only 5 par
 
 ---
 
+# Round 3 · nginx + php-fpm — results
+
+## How to identify congestion
+
+<div class="text-sm opacity-80 -mt-2 mb-2">How "full" the system is</div>
+
+<div class="h-32"><Shot src="/results/round3-5.png" /></div>
+<div class="h-56 mt-2"><Shot src="/results/round3-6.png" /></div>
+
+---
+
 # Round 3 · nginx + php-fpm — how to improve
 
 <div class="grid grid-cols-2 gap-8 mt-4">
