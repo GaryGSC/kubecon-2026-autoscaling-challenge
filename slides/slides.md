@@ -847,6 +847,14 @@ Argo CD `challenge-round4` → `bench-all` → **Create Job** · Grafana `namesp
 
 ---
 
+# Round 4 · Spring MVC — results
+
+## Why that much CPU?
+
+<div class="h-90 mt-2"><Shot src="/results/round4-4.png" /></div>
+
+---
+
 # Round 4 · Spring MVC — how to improve
 
 <div class="grid grid-cols-2 gap-8 mt-4">
