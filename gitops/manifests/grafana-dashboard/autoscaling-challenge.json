@@ -40,7 +40,10 @@
         },
         "definition": "label_values(kube_pod_info, k8s_cluster)",
         "refresh": 2,
-        "sort": 1
+        "sort": 1,
+        "multi": true,
+        "includeAll": true,
+        "current": { "text": ["All"], "value": ["$__all"] }
       },
       {
         "name": "namespace",
@@ -51,10 +54,10 @@
           "uid": "${datasource}"
         },
         "query": {
-          "query": "label_values(kube_pod_info{k8s_cluster=\"$k8s_cluster\"}, namespace)",
+          "query": "label_values(kube_pod_info{k8s_cluster=~\"$k8s_cluster\"}, namespace)",
           "refId": "A"
         },
-        "definition": "label_values(kube_pod_info{k8s_cluster=\"$k8s_cluster\"}, namespace)",
+        "definition": "label_values(kube_pod_info{k8s_cluster=~\"$k8s_cluster\"}, namespace)",
         "regex": "/^round.*/",
         "refresh": 2,
         "sort": 1,
@@ -140,7 +143,7 @@
       "targets": [
         {
           "refId": "A",
-          "expr": "sum(rate(container_cpu_usage_seconds_total{k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\",container!=\"\",container!=\"POD\"}[$rate_interval]))",
+          "expr": "sum(rate(container_cpu_usage_seconds_total{k8s_cluster=~\"$k8s_cluster\",namespace=\"$namespace\",container!=\"\",container!=\"POD\"}[$rate_interval]))",
           "legendFormat": "usage",
           "datasource": {
             "type": "prometheus",
@@ -149,7 +152,7 @@
         },
         {
           "refId": "B",
-          "expr": "sum(kube_pod_container_resource_requests{k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\",resource=\"cpu\"} and on(namespace, pod) (kube_pod_status_phase{k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\",phase=\"Running\"} == 1))",
+          "expr": "sum(kube_pod_container_resource_requests{k8s_cluster=~\"$k8s_cluster\",namespace=\"$namespace\",resource=\"cpu\"} and on(namespace, pod) (kube_pod_status_phase{k8s_cluster=~\"$k8s_cluster\",namespace=\"$namespace\",phase=\"Running\"} == 1))",
           "legendFormat": "requests",
           "datasource": {
             "type": "prometheus",
@@ -201,7 +204,7 @@
       "targets": [
         {
           "refId": "A",
-          "expr": "sum(container_memory_working_set_bytes{k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\",container!=\"\",container!=\"POD\"})",
+          "expr": "sum(container_memory_working_set_bytes{k8s_cluster=~\"$k8s_cluster\",namespace=\"$namespace\",container!=\"\",container!=\"POD\"})",
           "legendFormat": "usage",
           "datasource": {
             "type": "prometheus",
@@ -210,7 +213,7 @@
         },
         {
           "refId": "B",
-          "expr": "sum(kube_pod_container_resource_requests{k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\",resource=\"memory\"} and on(namespace, pod) (kube_pod_status_phase{k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\",phase=\"Running\"} == 1))",
+          "expr": "sum(kube_pod_container_resource_requests{k8s_cluster=~\"$k8s_cluster\",namespace=\"$namespace\",resource=\"memory\"} and on(namespace, pod) (kube_pod_status_phase{k8s_cluster=~\"$k8s_cluster\",namespace=\"$namespace\",phase=\"Running\"} == 1))",
           "legendFormat": "requests",
           "datasource": {
             "type": "prometheus",
@@ -321,7 +324,7 @@
       "targets": [
         {
           "refId": "A",
-          "expr": "sum by (status) (rate(k6_http_reqs_total{k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\"}[$rate_interval]))",
+          "expr": "sum by (status) (rate(k6_http_reqs_total{k8s_cluster=~\"$k8s_cluster\",namespace=\"$namespace\"}[$rate_interval]))",
           "legendFormat": "{{status}}",
           "datasource": {
             "type": "prometheus",
@@ -373,7 +376,7 @@
       "targets": [
         {
           "refId": "A",
-          "expr": "sum by (scenario) (rate(k6_http_reqs_total{k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\"}[$rate_interval]))",
+          "expr": "sum by (scenario) (rate(k6_http_reqs_total{k8s_cluster=~\"$k8s_cluster\",namespace=\"$namespace\"}[$rate_interval]))",
           "legendFormat": "{{scenario}}",
           "datasource": {
             "type": "prometheus",
@@ -454,7 +457,7 @@
       "targets": [
         {
           "refId": "A",
-          "expr": "sum(increase(k6_http_reqs_total{k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\"}[$__range]))",
+          "expr": "sum(increase(k6_http_reqs_total{k8s_cluster=~\"$k8s_cluster\",namespace=\"$namespace\"}[$__range]))",
           "instant": true,
           "legendFormat": "total",
           "datasource": {
@@ -464,7 +467,7 @@
         },
         {
           "refId": "B",
-          "expr": "sum(increase(k6_http_reqs_total{k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\",expected_response=\"false\"}[$__range])) or vector(0)",
+          "expr": "sum(increase(k6_http_reqs_total{k8s_cluster=~\"$k8s_cluster\",namespace=\"$namespace\",expected_response=\"false\"}[$__range])) or vector(0)",
           "instant": true,
           "legendFormat": "failed",
           "datasource": {
@@ -521,7 +524,7 @@
       "targets": [
         {
           "refId": "A",
-          "expr": "sum(k6_vus{k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\"})",
+          "expr": "sum(k6_vus{k8s_cluster=~\"$k8s_cluster\",namespace=\"$namespace\"})",
           "instant": true,
           "datasource": {
             "type": "prometheus",
@@ -598,7 +601,7 @@
       "targets": [
         {
           "refId": "A",
-          "expr": "sum(increase(k6_http_reqs_total{k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\",expected_response=\"true\"}[$__range])) / sum(increase(k6_http_reqs_total{k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\"}[$__range]))",
+          "expr": "sum(increase(k6_http_reqs_total{k8s_cluster=~\"$k8s_cluster\",namespace=\"$namespace\",expected_response=\"true\"}[$__range])) / sum(increase(k6_http_reqs_total{k8s_cluster=~\"$k8s_cluster\",namespace=\"$namespace\"}[$__range]))",
           "instant": true,
           "datasource": {
             "type": "prometheus",
@@ -650,7 +653,7 @@
       "targets": [
         {
           "refId": "A",
-          "expr": "histogram_quantile(0.50, sum(rate(k6_http_req_duration_seconds{k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\"}[$rate_interval])))",
+          "expr": "histogram_quantile(0.50, sum(rate(k6_http_req_duration_seconds{k8s_cluster=~\"$k8s_cluster\",namespace=\"$namespace\"}[$rate_interval])))",
           "legendFormat": "p50",
           "datasource": {
             "type": "prometheus",
@@ -659,7 +662,7 @@
         },
         {
           "refId": "B",
-          "expr": "histogram_quantile(0.90, sum(rate(k6_http_req_duration_seconds{k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\"}[$rate_interval])))",
+          "expr": "histogram_quantile(0.90, sum(rate(k6_http_req_duration_seconds{k8s_cluster=~\"$k8s_cluster\",namespace=\"$namespace\"}[$rate_interval])))",
           "legendFormat": "p90",
           "datasource": {
             "type": "prometheus",
@@ -668,7 +671,7 @@
         },
         {
           "refId": "C",
-          "expr": "histogram_quantile(0.95, sum(rate(k6_http_req_duration_seconds{k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\"}[$rate_interval])))",
+          "expr": "histogram_quantile(0.95, sum(rate(k6_http_req_duration_seconds{k8s_cluster=~\"$k8s_cluster\",namespace=\"$namespace\"}[$rate_interval])))",
           "legendFormat": "p95",
           "datasource": {
             "type": "prometheus",
@@ -677,7 +680,7 @@
         },
         {
           "refId": "D",
-          "expr": "histogram_quantile(0.99, sum by (scenario) (rate(k6_http_req_duration_seconds{k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\"}[$rate_interval])))",
+          "expr": "histogram_quantile(0.99, sum by (scenario) (rate(k6_http_req_duration_seconds{k8s_cluster=~\"$k8s_cluster\",namespace=\"$namespace\"}[$rate_interval])))",
           "legendFormat": "p99 {{scenario}}",
           "datasource": {
             "type": "prometheus",
@@ -733,7 +736,7 @@
       "targets": [
         {
           "refId": "A",
-          "expr": "avg_over_time(count(kube_pod_status_phase{k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\",phase=\"Running\",pod!~\"bench-.*\"} == 1)[$__range:15s])",
+          "expr": "avg_over_time(count(kube_pod_status_phase{k8s_cluster=~\"$k8s_cluster\",namespace=\"$namespace\",phase=\"Running\",pod!~\"bench-.*\"} == 1)[$__range:15s])",
           "instant": true,
           "datasource": {
             "type": "prometheus",
@@ -797,7 +800,7 @@
       "targets": [
         {
           "refId": "A",
-          "expr": "avg_over_time((sum(sum by (namespace, pod) (rate(container_cpu_usage_seconds_total{container!~\".*-exporter|queue-proxy\",k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\",container!=\"\",container!=\"POD\",pod!~\"bench-.*\"}[1m])) and on(namespace, pod) (kube_pod_status_phase{k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\",phase=\"Running\"} == 1)) / sum(kube_pod_container_resource_limits{container!~\".*-exporter|queue-proxy\",k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\",resource=\"cpu\",pod!~\"bench-.*\"} and on(namespace, pod) (kube_pod_status_phase{k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\",phase=\"Running\"} == 1)))[$__range:15s])",
+          "expr": "avg_over_time((sum(sum by (namespace, pod) (rate(container_cpu_usage_seconds_total{container!~\".*-exporter|queue-proxy\",k8s_cluster=~\"$k8s_cluster\",namespace=\"$namespace\",container!=\"\",container!=\"POD\",pod!~\"bench-.*\"}[1m])) and on(namespace, pod) (kube_pod_status_phase{k8s_cluster=~\"$k8s_cluster\",namespace=\"$namespace\",phase=\"Running\"} == 1)) / sum(kube_pod_container_resource_limits{container!~\".*-exporter|queue-proxy\",k8s_cluster=~\"$k8s_cluster\",namespace=\"$namespace\",resource=\"cpu\",pod!~\"bench-.*\"} and on(namespace, pod) (kube_pod_status_phase{k8s_cluster=~\"$k8s_cluster\",namespace=\"$namespace\",phase=\"Running\"} == 1)))[$__range:15s])",
           "instant": true,
           "datasource": {
             "type": "prometheus",
@@ -850,7 +853,7 @@
       "targets": [
         {
           "refId": "A",
-          "expr": "sum(sum by (namespace, pod) (rate(container_cpu_usage_seconds_total{container!~\".*-exporter|queue-proxy\",k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\",container!=\"\",container!=\"POD\",pod!~\"bench-.*\"}[$rate_interval])) and on(namespace, pod) (kube_pod_status_phase{k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\",phase=\"Running\"} == 1)) / sum(kube_pod_container_resource_limits{container!~\".*-exporter|queue-proxy\",k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\",resource=\"cpu\",pod!~\"bench-.*\"} and on(namespace, pod) (kube_pod_status_phase{k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\",phase=\"Running\"} == 1))",
+          "expr": "sum(sum by (namespace, pod) (rate(container_cpu_usage_seconds_total{container!~\".*-exporter|queue-proxy\",k8s_cluster=~\"$k8s_cluster\",namespace=\"$namespace\",container!=\"\",container!=\"POD\",pod!~\"bench-.*\"}[$rate_interval])) and on(namespace, pod) (kube_pod_status_phase{k8s_cluster=~\"$k8s_cluster\",namespace=\"$namespace\",phase=\"Running\"} == 1)) / sum(kube_pod_container_resource_limits{container!~\".*-exporter|queue-proxy\",k8s_cluster=~\"$k8s_cluster\",namespace=\"$namespace\",resource=\"cpu\",pod!~\"bench-.*\"} and on(namespace, pod) (kube_pod_status_phase{k8s_cluster=~\"$k8s_cluster\",namespace=\"$namespace\",phase=\"Running\"} == 1))",
           "legendFormat": "CPU",
           "datasource": {
             "type": "prometheus",
@@ -914,7 +917,7 @@
       "targets": [
         {
           "refId": "A",
-          "expr": "avg_over_time((sum(sum by (namespace, pod) (container_memory_working_set_bytes{container!~\".*-exporter|queue-proxy\",k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\",container!=\"\",container!=\"POD\",pod!~\"bench-.*\"}) and on(namespace, pod) (kube_pod_status_phase{k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\",phase=\"Running\"} == 1)) / sum(kube_pod_container_resource_limits{container!~\".*-exporter|queue-proxy\",k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\",resource=\"memory\",pod!~\"bench-.*\"} and on(namespace, pod) (kube_pod_status_phase{k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\",phase=\"Running\"} == 1)))[$__range:15s])",
+          "expr": "avg_over_time((sum(sum by (namespace, pod) (container_memory_working_set_bytes{container!~\".*-exporter|queue-proxy\",k8s_cluster=~\"$k8s_cluster\",namespace=\"$namespace\",container!=\"\",container!=\"POD\",pod!~\"bench-.*\"}) and on(namespace, pod) (kube_pod_status_phase{k8s_cluster=~\"$k8s_cluster\",namespace=\"$namespace\",phase=\"Running\"} == 1)) / sum(kube_pod_container_resource_limits{container!~\".*-exporter|queue-proxy\",k8s_cluster=~\"$k8s_cluster\",namespace=\"$namespace\",resource=\"memory\",pod!~\"bench-.*\"} and on(namespace, pod) (kube_pod_status_phase{k8s_cluster=~\"$k8s_cluster\",namespace=\"$namespace\",phase=\"Running\"} == 1)))[$__range:15s])",
           "instant": true,
           "datasource": {
             "type": "prometheus",
@@ -967,7 +970,7 @@
       "targets": [
         {
           "refId": "A",
-          "expr": "sum(sum by (namespace, pod) (container_memory_working_set_bytes{container!~\".*-exporter|queue-proxy\",k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\",container!=\"\",container!=\"POD\",pod!~\"bench-.*\"}) and on(namespace, pod) (kube_pod_status_phase{k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\",phase=\"Running\"} == 1)) / sum(kube_pod_container_resource_limits{container!~\".*-exporter|queue-proxy\",k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\",resource=\"memory\",pod!~\"bench-.*\"} and on(namespace, pod) (kube_pod_status_phase{k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\",phase=\"Running\"} == 1))",
+          "expr": "sum(sum by (namespace, pod) (container_memory_working_set_bytes{container!~\".*-exporter|queue-proxy\",k8s_cluster=~\"$k8s_cluster\",namespace=\"$namespace\",container!=\"\",container!=\"POD\",pod!~\"bench-.*\"}) and on(namespace, pod) (kube_pod_status_phase{k8s_cluster=~\"$k8s_cluster\",namespace=\"$namespace\",phase=\"Running\"} == 1)) / sum(kube_pod_container_resource_limits{container!~\".*-exporter|queue-proxy\",k8s_cluster=~\"$k8s_cluster\",namespace=\"$namespace\",resource=\"memory\",pod!~\"bench-.*\"} and on(namespace, pod) (kube_pod_status_phase{k8s_cluster=~\"$k8s_cluster\",namespace=\"$namespace\",phase=\"Running\"} == 1))",
           "legendFormat": "memory",
           "datasource": {
             "type": "prometheus",
@@ -1019,7 +1022,7 @@
       "targets": [
         {
           "refId": "A",
-          "expr": "count(kube_pod_status_phase{k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\",phase=\"Running\",pod!~\"bench-.*\"} == 1)",
+          "expr": "count(kube_pod_status_phase{k8s_cluster=~\"$k8s_cluster\",namespace=\"$namespace\",phase=\"Running\",pod!~\"bench-.*\"} == 1)",
           "legendFormat": "running",
           "datasource": {
             "type": "prometheus",
@@ -1028,7 +1031,7 @@
         },
         {
           "refId": "B",
-          "expr": "count(kube_pod_status_phase{k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\",phase=\"Pending\",pod!~\"bench-.*\"} == 1)",
+          "expr": "count(kube_pod_status_phase{k8s_cluster=~\"$k8s_cluster\",namespace=\"$namespace\",phase=\"Pending\",pod!~\"bench-.*\"} == 1)",
           "legendFormat": "pending",
           "datasource": {
             "type": "prometheus",
@@ -1037,7 +1040,7 @@
         },
         {
           "refId": "C",
-          "expr": "sum(kube_pod_status_ready{k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\",condition=\"true\",pod!~\"bench-.*\"})",
+          "expr": "sum(kube_pod_status_ready{k8s_cluster=~\"$k8s_cluster\",namespace=\"$namespace\",condition=\"true\",pod!~\"bench-.*\"})",
           "legendFormat": "ready",
           "datasource": {
             "type": "prometheus",
@@ -1104,7 +1107,7 @@
       "targets": [
         {
           "refId": "A",
-          "expr": "sort_desc(min_over_time(kube_pod_status_ready_time{k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\",pod!~\"bench-.*\"}[$__range]) - on(namespace, pod) group_left max_over_time(kube_pod_created{k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\",pod!~\"bench-.*\"}[$__range]))",
+          "expr": "sort_desc(min_over_time(kube_pod_status_ready_time{k8s_cluster=~\"$k8s_cluster\",namespace=\"$namespace\",pod!~\"bench-.*\"}[$__range]) - on(namespace, pod) group_left max_over_time(kube_pod_created{k8s_cluster=~\"$k8s_cluster\",namespace=\"$namespace\",pod!~\"bench-.*\"}[$__range]))",
           "instant": true,
           "legendFormat": "{{pod}}",
           "datasource": {
@@ -1216,7 +1219,7 @@
       "targets": [
         {
           "refId": "A",
-          "expr": "sum by (status) (rate(nginxlog_http_response_count_total{k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\"}[$rate_interval]))",
+          "expr": "sum by (status) (rate(nginxlog_http_response_count_total{k8s_cluster=~\"$k8s_cluster\",namespace=\"$namespace\"}[$rate_interval]))",
           "legendFormat": "{{status}}",
           "datasource": {
             "type": "prometheus",
@@ -1268,7 +1271,7 @@
       "targets": [
         {
           "refId": "A",
-          "expr": "sum(nginx_connections_reading{k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\"}) + sum(nginx_connections_writing{k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\"})",
+          "expr": "sum(nginx_connections_reading{k8s_cluster=~\"$k8s_cluster\",namespace=\"$namespace\"}) + sum(nginx_connections_writing{k8s_cluster=~\"$k8s_cluster\",namespace=\"$namespace\"})",
           "legendFormat": "in flight (reading + writing)",
           "datasource": {
             "type": "prometheus",
@@ -1277,7 +1280,7 @@
         },
         {
           "refId": "B",
-          "expr": "sum(nginx_connections_waiting{k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\"})",
+          "expr": "sum(nginx_connections_waiting{k8s_cluster=~\"$k8s_cluster\",namespace=\"$namespace\"})",
           "legendFormat": "waiting (idle keep-alive)",
           "datasource": {
             "type": "prometheus",
@@ -1329,7 +1332,7 @@
       "targets": [
         {
           "refId": "A",
-          "expr": "sum by (pod) (rate(nginxlog_http_response_count_total{k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\"}[$rate_interval]))",
+          "expr": "sum by (pod) (rate(nginxlog_http_response_count_total{k8s_cluster=~\"$k8s_cluster\",namespace=\"$namespace\"}[$rate_interval]))",
           "legendFormat": "{{pod}}",
           "datasource": {
             "type": "prometheus",
@@ -1394,7 +1397,7 @@
       "targets": [
         {
           "refId": "A",
-          "expr": "sum(app_requests_in_flight{k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\"})",
+          "expr": "sum(app_requests_in_flight{k8s_cluster=~\"$k8s_cluster\",namespace=\"$namespace\"})",
           "legendFormat": "Go busy",
           "datasource": {
             "type": "prometheus",
@@ -1403,7 +1406,7 @@
         },
         {
           "refId": "B",
-          "expr": "sum(app_workers{k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\"})",
+          "expr": "sum(app_workers{k8s_cluster=~\"$k8s_cluster\",namespace=\"$namespace\"})",
           "legendFormat": "Go capacity",
           "datasource": {
             "type": "prometheus",
@@ -1412,7 +1415,7 @@
         },
         {
           "refId": "C",
-          "expr": "sum(phpfpm_active_processes{k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\"})",
+          "expr": "sum(phpfpm_active_processes{k8s_cluster=~\"$k8s_cluster\",namespace=\"$namespace\"})",
           "legendFormat": "php-fpm busy",
           "datasource": {
             "type": "prometheus",
@@ -1421,7 +1424,7 @@
         },
         {
           "refId": "D",
-          "expr": "sum(phpfpm_total_processes{k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\"})",
+          "expr": "sum(phpfpm_total_processes{k8s_cluster=~\"$k8s_cluster\",namespace=\"$namespace\"})",
           "legendFormat": "php-fpm capacity",
           "datasource": {
             "type": "prometheus",
@@ -1430,7 +1433,7 @@
         },
         {
           "refId": "E",
-          "expr": "sum(tomcat_threads_busy_threads{k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\"})",
+          "expr": "sum(tomcat_threads_busy_threads{k8s_cluster=~\"$k8s_cluster\",namespace=\"$namespace\"})",
           "legendFormat": "Tomcat busy",
           "datasource": {
             "type": "prometheus",
@@ -1439,7 +1442,7 @@
         },
         {
           "refId": "F",
-          "expr": "sum(tomcat_threads_config_max_threads{k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\"})",
+          "expr": "sum(tomcat_threads_config_max_threads{k8s_cluster=~\"$k8s_cluster\",namespace=\"$namespace\"})",
           "legendFormat": "Tomcat capacity",
           "datasource": {
             "type": "prometheus",
@@ -1491,7 +1494,7 @@
       "targets": [
         {
           "refId": "A",
-          "expr": "sum(app_requests_queued{k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\"})",
+          "expr": "sum(app_requests_queued{k8s_cluster=~\"$k8s_cluster\",namespace=\"$namespace\"})",
           "legendFormat": "Go (waiting for a worker)",
           "datasource": {
             "type": "prometheus",
@@ -1500,7 +1503,7 @@
         },
         {
           "refId": "B",
-          "expr": "sum(phpfpm_listen_queue{k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\"})",
+          "expr": "sum(phpfpm_listen_queue{k8s_cluster=~\"$k8s_cluster\",namespace=\"$namespace\"})",
           "legendFormat": "php-fpm listen queue",
           "datasource": {
             "type": "prometheus",
@@ -1613,7 +1616,7 @@
       "targets": [
         {
           "refId": "A",
-          "expr": "sum by (code) (rate(app_backend_requests_total{k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\"}[$rate_interval]))",
+          "expr": "sum by (code) (rate(app_backend_requests_total{k8s_cluster=~\"$k8s_cluster\",namespace=\"$namespace\"}[$rate_interval]))",
           "legendFormat": "{{code}}",
           "datasource": {
             "type": "prometheus",
@@ -1665,7 +1668,7 @@
       "targets": [
         {
           "refId": "A",
-          "expr": "sum by (handler, code) (rate(app_http_requests_total{k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\"}[$rate_interval]))",
+          "expr": "sum by (handler, code) (rate(app_http_requests_total{k8s_cluster=~\"$k8s_cluster\",namespace=\"$namespace\"}[$rate_interval]))",
           "legendFormat": "{{handler}} {{code}}",
           "datasource": {
             "type": "prometheus",
@@ -1730,7 +1733,7 @@
       "targets": [
         {
           "refId": "A",
-          "expr": "sum(kn_revision_pods_desired{k8s_cluster=\"$k8s_cluster\",k8s_namespace_name=\"$namespace\"})",
+          "expr": "sum(kn_revision_pods_desired{k8s_cluster=~\"$k8s_cluster\",k8s_namespace_name=\"$namespace\"})",
           "legendFormat": "desired",
           "datasource": {
             "type": "prometheus",
@@ -1739,7 +1742,7 @@
         },
         {
           "refId": "B",
-          "expr": "sum(kn_revision_pods_requested{k8s_cluster=\"$k8s_cluster\",k8s_namespace_name=\"$namespace\"})",
+          "expr": "sum(kn_revision_pods_requested{k8s_cluster=~\"$k8s_cluster\",k8s_namespace_name=\"$namespace\"})",
           "legendFormat": "requested",
           "datasource": {
             "type": "prometheus",
@@ -1748,7 +1751,7 @@
         },
         {
           "refId": "C",
-          "expr": "sum(kn_revision_pods_count{k8s_cluster=\"$k8s_cluster\",k8s_namespace_name=\"$namespace\"})",
+          "expr": "sum(kn_revision_pods_count{k8s_cluster=~\"$k8s_cluster\",k8s_namespace_name=\"$namespace\"})",
           "legendFormat": "ready",
           "datasource": {
             "type": "prometheus",
@@ -1757,7 +1760,7 @@
         },
         {
           "refId": "D",
-          "expr": "sum(kn_revision_pods_not_ready_count{k8s_cluster=\"$k8s_cluster\",k8s_namespace_name=\"$namespace\"})",
+          "expr": "sum(kn_revision_pods_not_ready_count{k8s_cluster=~\"$k8s_cluster\",k8s_namespace_name=\"$namespace\"})",
           "legendFormat": "not ready",
           "datasource": {
             "type": "prometheus",
@@ -1766,7 +1769,7 @@
         },
         {
           "refId": "E",
-          "expr": "sum(kn_revision_pods_pending_count{k8s_cluster=\"$k8s_cluster\",k8s_namespace_name=\"$namespace\"})",
+          "expr": "sum(kn_revision_pods_pending_count{k8s_cluster=~\"$k8s_cluster\",k8s_namespace_name=\"$namespace\"})",
           "legendFormat": "pending",
           "datasource": {
             "type": "prometheus",
@@ -1818,7 +1821,7 @@
       "targets": [
         {
           "refId": "A",
-          "expr": "max by (kn_service_name) (kn_revision_concurrency_stable{k8s_cluster=\"$k8s_cluster\",k8s_namespace_name=\"$namespace\"})",
+          "expr": "max by (kn_service_name) (kn_revision_concurrency_stable{k8s_cluster=~\"$k8s_cluster\",k8s_namespace_name=\"$namespace\"})",
           "legendFormat": "{{kn_service_name}} stable (60s window)",
           "datasource": {
             "type": "prometheus",
@@ -1827,7 +1830,7 @@
         },
         {
           "refId": "B",
-          "expr": "max by (kn_service_name) (kn_revision_concurrency_panic{k8s_cluster=\"$k8s_cluster\",k8s_namespace_name=\"$namespace\"})",
+          "expr": "max by (kn_service_name) (kn_revision_concurrency_panic{k8s_cluster=~\"$k8s_cluster\",k8s_namespace_name=\"$namespace\"})",
           "legendFormat": "{{kn_service_name}} panic (6s window)",
           "datasource": {
             "type": "prometheus",
@@ -1836,7 +1839,7 @@
         },
         {
           "refId": "C",
-          "expr": "max by (kn_service_name) (kn_revision_concurrency_target{k8s_cluster=\"$k8s_cluster\",k8s_namespace_name=\"$namespace\"})",
+          "expr": "max by (kn_service_name) (kn_revision_concurrency_target{k8s_cluster=~\"$k8s_cluster\",k8s_namespace_name=\"$namespace\"})",
           "legendFormat": "{{kn_service_name}} target per Pod",
           "datasource": {
             "type": "prometheus",
@@ -1887,7 +1890,7 @@
       "targets": [
         {
           "refId": "A",
-          "expr": "sum(kn_revision_capacity_excess{k8s_cluster=\"$k8s_cluster\",k8s_namespace_name=\"$namespace\"})",
+          "expr": "sum(kn_revision_capacity_excess{k8s_cluster=~\"$k8s_cluster\",k8s_namespace_name=\"$namespace\"})",
           "legendFormat": "excess capacity",
           "datasource": {
             "type": "prometheus",
@@ -1985,7 +1988,7 @@
       "targets": [
         {
           "refId": "A",
-          "expr": "sum by (http_response_status_code) (rate(kn_serving_invocation_duration_seconds_count{k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\"}[$rate_interval]))",
+          "expr": "sum by (http_response_status_code) (rate(kn_serving_invocation_duration_seconds_count{k8s_cluster=~\"$k8s_cluster\",namespace=\"$namespace\"}[$rate_interval]))",
           "legendFormat": "{{http_response_status_code}}",
           "datasource": {
             "type": "prometheus",
@@ -2037,7 +2040,7 @@
       "targets": [
         {
           "refId": "A",
-          "expr": "histogram_quantile(0.5, sum by (le) (rate(kn_serving_invocation_duration_seconds_bucket{k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\"}[$rate_interval])))",
+          "expr": "histogram_quantile(0.5, sum by (le) (rate(kn_serving_invocation_duration_seconds_bucket{k8s_cluster=~\"$k8s_cluster\",namespace=\"$namespace\"}[$rate_interval])))",
           "legendFormat": "p50",
           "datasource": {
             "type": "prometheus",
@@ -2046,7 +2049,7 @@
         },
         {
           "refId": "B",
-          "expr": "histogram_quantile(0.9, sum by (le) (rate(kn_serving_invocation_duration_seconds_bucket{k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\"}[$rate_interval])))",
+          "expr": "histogram_quantile(0.9, sum by (le) (rate(kn_serving_invocation_duration_seconds_bucket{k8s_cluster=~\"$k8s_cluster\",namespace=\"$namespace\"}[$rate_interval])))",
           "legendFormat": "p90",
           "datasource": {
             "type": "prometheus",
@@ -2055,7 +2058,7 @@
         },
         {
           "refId": "C",
-          "expr": "histogram_quantile(0.99, sum by (le) (rate(kn_serving_invocation_duration_seconds_bucket{k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\"}[$rate_interval])))",
+          "expr": "histogram_quantile(0.99, sum by (le) (rate(kn_serving_invocation_duration_seconds_bucket{k8s_cluster=~\"$k8s_cluster\",namespace=\"$namespace\"}[$rate_interval])))",
           "legendFormat": "p99",
           "datasource": {
             "type": "prometheus",
@@ -2107,7 +2110,7 @@
       "targets": [
         {
           "refId": "A",
-          "expr": "sum(kn_serving_queue_depth{k8s_cluster=\"$k8s_cluster\",namespace=\"$namespace\"})",
+          "expr": "sum(kn_serving_queue_depth{k8s_cluster=~\"$k8s_cluster\",namespace=\"$namespace\"})",
           "legendFormat": "queue-proxy queue depth",
           "datasource": {
             "type": "prometheus",
@@ -2116,7 +2119,7 @@
         },
         {
           "refId": "B",
-          "expr": "sum(kn_revision_request_concurrency{k8s_cluster=\"$k8s_cluster\",k8s_namespace_name=\"$namespace\"})",
+          "expr": "sum(kn_revision_request_concurrency{k8s_cluster=~\"$k8s_cluster\",k8s_namespace_name=\"$namespace\"})",
           "legendFormat": "activator in flight",
           "datasource": {
             "type": "prometheus",
