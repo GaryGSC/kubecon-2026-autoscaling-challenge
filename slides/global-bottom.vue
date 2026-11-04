@@ -1,5 +1,5 @@
 <template>
-  <div class="slide-number">
+  <div v-if="$nav.currentPage > 1" class="slide-number">
     <SlideCurrentNo /> / <SlidesTotal />
   </div>
 </template>
@@ -10,7 +10,8 @@
   bottom: 0.4rem;
   right: 0.6rem;
   font-size: 0.7rem;
-  color: var(--kc-lavender);
+  color: #fff;
+  opacity: 0.35;
   font-family: 'JetBrains Mono', monospace;
   pointer-events: none;
   z-index: 10;

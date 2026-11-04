@@ -56,7 +56,7 @@ layout: center
 
 # Once upon a time…
 
-there was a demand to run the cluster *more effectively*. So you ask around:
+there was a demand to run the cluster *more efficiently*. So you ask around:
 
 <div class="mt-6 w-3/4">
 
@@ -133,7 +133,7 @@ class: section text-center
 ```bash
 git clone https://github.com/depeche-io/kubecon-2026-autoscaling-challenge
 cd kubecon-2026-autoscaling-challenge
-./bin/up.sh          # 5-10 minutes
+./bin/up.sh          # 5–10 minutes
 ```
 
 **GitHub Codespaces** — *Code* → *Codespaces* → *Create codespace on main* (`up.sh` runs on start)
@@ -292,11 +292,17 @@ Good autoscaling = <strong>users don't notice</strong> and you <strong>don't pay
    <span class="text-sm opacity-80">self-heal is off; *Sync* resets the round</span>
 3. **Run** — CronJob `bench-all` → *⋯* → **Create Job**
 4. **Read** — Grafana, `namespace` = the round
-5. **Tune it** — one knob at a time
+5. **Adjust** — one knob at a time
 6. **Rerun**
 
 </div>
 
+
+---
+
+# Leaderboard 🏆
+
+<div class="h-96 mt-4 flex items-center justify-center rounded-lg border-2 border-dashed border-[#B9C6E8] text-3xl text-[#B9C6E8]">Your runs over here</div>
 
 ---
 
@@ -371,7 +377,7 @@ Argo CD `challenge-round1-cpu` → `bench-all` → **Create Job** · Grafana `na
 
 # Round 1 · CPU HPA — results
 
-## Did all the Pods serve ~ the same amount of requests?
+## Did all the Pods serve roughly the same number of requests?
 
 <Shot src="/results/round1-cpu-2.png" />
 
@@ -400,7 +406,7 @@ Argo CD `challenge-round1-cpu` → `bench-all` → **Create Job** · Grafana `na
 <div>
 
 - **Right-size requests** — utilization is relative to them; wrong requests = wrong scaling
-- drop the CPU **limit** — throttling makes latency, not throughput
+- drop the CPU **limit** — throttling adds latency, not throughput
 
 </div>
 
@@ -420,7 +426,10 @@ Argo CD `challenge-round1-cpu` → `bench-all` → **Create Job** · Grafana `na
 
 <div class="grid grid-cols-[2fr_5fr] gap-8 mt-2 items-center">
 
+<div>
+<div class="text-lg font-bold text-[#B9C6E8]">After</div>
 <div class="h-90"><Shot src="/results/round1-improved-1.png" /></div>
+</div>
 
 <div class="grid grid-cols-[auto_1fr] gap-x-6 gap-y-3 items-center">
 
@@ -543,7 +552,7 @@ Think: a DB connection pool, a thread pool, a downstream API. The app is **full*
 
 ---
 
-# Round 2 · Go, 10 workers — expectations
+# Round 2 · Go Demo App — expectations
 
 <div class="text-xl mt-4 leading-loose">
 
@@ -562,7 +571,7 @@ class: section text-center
 
 # 🎬 Demo time
 
-## Round 2 · Go, 10 workers
+## Round 2 · Go Demo App
 
 <div class="mt-6 text-lg">
 
@@ -572,15 +581,15 @@ Argo CD `challenge-round2` → `bench-all` → **Create Job** · Grafana `namesp
 
 ---
 
-# Round 2 · Go, 10 workers — results
+# Round 2 · Go Demo App — results
 
-## Knative Details
+## Knative details
 
 <Shot src="/results/round2.png" />
 
 ---
 
-# Round 2 · Go, 10 workers — results
+# Round 2 · Go Demo App — results
 
 ## Why 8 Pods when we have 50 parallel requests?
 
@@ -588,13 +597,12 @@ Argo CD `challenge-round2` → `bench-all` → **Create Job** · Grafana `namesp
 
 ---
 
-# Round 2 · Go, 10 workers — how to improve
+# Round 2 · Go Demo App — how to improve
 
 <div class="grid grid-cols-2 gap-8 mt-4">
 
 <div>
 
-- `target` = `WORKERS` — **match the app's real capacity**
 - `containerConcurrency: 10` — the queue moves from the app to the activator, which can route to new Pods
 - `target-utilization-percentage` — how early to add a Pod
 
@@ -612,7 +620,7 @@ Argo CD `challenge-round2` → `bench-all` → **Create Job** · Grafana `namesp
 
 ---
 
-# Round 2 · Improved — before vs. after
+# Round 2 · Go Demo App — improved, before vs. after
 
 <div class="grid grid-cols-[auto_1fr] gap-x-6 gap-y-3 items-center mt-2">
 
@@ -728,7 +736,7 @@ Status `0` = no response within the 5 s k6 timeout — during `slow`, only 5 par
 
 ## Which latency is correct?
 
-<div class="text-sm opacity-80 -mt-2 mb-2">Where do the requests go if the client timeouts?</div>
+<div class="text-sm opacity-80 -mt-2 mb-2">Where do the requests go if the client times out?</div>
 
 <div class="grid grid-cols-2 gap-6">
 
@@ -884,10 +892,10 @@ Argo CD `challenge-round4` → `bench-all` → **Create Job** · Grafana `namesp
 
 <div class="grid grid-cols-[auto_1fr] gap-x-6 gap-y-3 items-center mt-2">
 
-<div class="text-lg font-bold text-[#B9C6E8]">Before<br/><span class="text-sm font-normal">utilization 70%</span></div>
+<div class="text-lg font-bold text-[#B9C6E8]">Before<br/><span class="text-sm font-normal">utilization 70 %</span></div>
 <div class="h-44"><Shot src="/results/round4-improved-before.png" /></div>
 
-<div class="text-lg font-bold text-[#B9C6E8]">Improved?<br/><span class="text-sm font-normal">utilization 20%</span></div>
+<div class="text-lg font-bold text-[#B9C6E8]">Improved?<br/><span class="text-sm font-normal">utilization 20 %</span></div>
 <div class="h-44"><Shot src="/results/round4-improved-after.png" /></div>
 
 </div>
@@ -953,7 +961,7 @@ Argo CD `challenge-round5` → wait for 0 Pods → `bench-all` → **Create Job*
 
 # Round 5 · scale to zero — results
 
-## Not bad, but ...
+## Not bad, but…
 
 <div class="h-96 mt-2"><Shot src="/results/round5-1.png" /></div>
 
@@ -1000,6 +1008,7 @@ k6 ──► BFF (app, MODE=bff, 10 workers) ──► backend (10 workers, slee
 <div>
 
 - both tiers = the round 2 Go app
+- the BFF does **not** sleep itself — it forwards the wait to the backend
 - two Knative Services, **autoscale independently**, target 10 each
 - per-request override: `?timeout=` / `?backend_timeout=`
 
@@ -1062,7 +1071,7 @@ Argo CD `challenge-round6` → `bench-all` → **Create Job** · Grafana `namesp
 
 # Round 6 · BFF → backend — results
 
-## Twice the problem ...
+## Twice the problem…
 
 <div class="h-[30rem] mt-0"><Shot src="/results/round6-4.png" /></div>
 
@@ -1070,7 +1079,7 @@ Argo CD `challenge-round6` → `bench-all` → **Create Job** · Grafana `namesp
 
 # Round 6 · BFF → backend — results
 
-## Fast OK, Slow fail
+## Fast OK, slow fails
 
 <div class="grid grid-cols-2 gap-6">
 
@@ -1104,7 +1113,7 @@ Argo CD `challenge-round6` → `bench-all` → **Create Job** · Grafana `namesp
 
 - timeouts **shrink along the chain**: client > BFF > backend
 - timeouts follow the SLO, not the defaults
-- **backend deadline 2.5 s → 3.1 s** — `slow` waits up to 3 s
+- **backend deadline 2.5 s → 3.1 s** — `slow` waits up to 3 s<br/><span class="text-sm opacity-80">quick fix — now backend 3.1 s > BFF 3 s, breaks the rule above</span>
 - propagate deadlines — don't work for callers who are gone (499)
 
 </div>
@@ -1137,15 +1146,9 @@ Argo CD `challenge-round6` → `bench-all` → **Create Job** · Grafana `namesp
 
 <div class="kcd-card kcd-card-warn text-sm -mt-4">
 
-**But** BFF (1–3 s) + backend (1–3 s) = 2–6 s > **5 s timeout on the client**
+**But** BFF queue + backend queue + 1–3 s work can still exceed the **5 s client timeout**
 
 </div>
-
----
-
-# Leaderboard 🏆
-
-<div class="h-96 mt-4 flex items-center justify-center rounded-lg border-2 border-dashed border-[#B9C6E8] text-3xl text-[#B9C6E8]">Your runs over here</div>
 
 ---
 
@@ -1160,7 +1163,7 @@ Argo CD `challenge-round6` → `bench-all` → **Create Job** · Grafana `namesp
 <div class="mt-6 text-xl leading-relaxed">
 
 1. **CPU is not throughput.** Scale on what saturates: workers, requests in flight, queue.
-2. **Startup time is part of your scaling budget.** A Pod that's ready in 40 s didn't help the 2-minute burst.
+2. **Startup time is part of your scaling budget.** A Pod ready after 40 s misses a third of a 2‑minute burst.
 3. **Pods are scaling units, not containers.** Sidecars and co-located processes change the math.
 4. **Timeouts and autoscaling are one design.** Measure the whole call chain.
 
