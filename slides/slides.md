@@ -769,6 +769,20 @@ Status `0` = no response within the 5 s k6 timeout — during `slow`, only 5 par
 
 ---
 
+# Round 3 · Improved — before vs. after
+
+<div class="grid grid-cols-[auto_1fr] gap-x-6 gap-y-3 items-center mt-2">
+
+<div class="text-lg font-bold text-[#B9C6E8]">Before<br/><span class="text-sm font-normal">target 10</span></div>
+<div class="h-44"><Shot src="/results/round3-improved-before.png" /></div>
+
+<div class="text-lg font-bold text-[#B9C6E8]">After<br/><span class="text-sm font-normal">target 2</span></div>
+<div class="h-44"><Shot src="/results/round3-improved-after.png" /></div>
+
+</div>
+
+---
+
 # Round 4 · Spring MVC — setup
 
 <div class="grid grid-cols-[1fr_1fr] gap-8 mt-2">
