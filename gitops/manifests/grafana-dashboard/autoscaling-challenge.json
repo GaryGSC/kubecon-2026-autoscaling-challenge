@@ -760,6 +760,176 @@
       ]
     },
     {
+      "type": "heatmap",
+      "title": "Latency distribution (k6)",
+      "id": 36,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "description": "All k6 requests per latency bucket over time, from the k6 native histogram. A band climbing up = requests waiting in a queue; a band at 5 s = the k6 timeout.",
+      "gridPos": {
+        "h": 8,
+        "w": 16,
+        "x": 0,
+        "y": 33
+      },
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "options": {
+        "calculate": false,
+        "cellGap": 1,
+        "color": {
+          "mode": "scheme",
+          "scheme": "Oranges",
+          "scale": "exponential",
+          "exponent": 0.5,
+          "steps": 64,
+          "reverse": false,
+          "fill": "dark-orange"
+        },
+        "yAxis": {
+          "axisPlacement": "left",
+          "unit": "s"
+        },
+        "rowsFrame": {
+          "layout": "auto"
+        },
+        "cellValues": {
+          "unit": "reqps"
+        },
+        "filterValues": {
+          "le": 1e-09
+        },
+        "legend": {
+          "show": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "yHistogram": true,
+          "showColorScale": true
+        },
+        "exemplars": {
+          "color": "rgba(255,0,255,0.7)"
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "sum(rate(k6_http_req_duration_seconds{k8s_cluster=~\"$k8s_cluster\",namespace=\"$namespace\"}[$rate_interval]))",
+          "format": "heatmap",
+          "legendFormat": "{{le}}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          }
+        }
+      ]
+    },
+    {
+      "type": "bargauge",
+      "title": "Latency percentiles in range (k6)",
+      "id": 37,
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${datasource}"
+      },
+      "description": "Percentiles per scenario over the whole selected time range - the latency profile of one benchmark run.",
+      "gridPos": {
+        "h": 8,
+        "w": 8,
+        "x": 16,
+        "y": 33
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s",
+          "min": 0,
+          "decimals": 2,
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "orange",
+                "value": 1
+              },
+              {
+                "color": "red",
+                "value": 4
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "options": {
+        "orientation": "horizontal",
+        "displayMode": "gradient",
+        "showUnfilled": true,
+        "valueMode": "color",
+        "namePlacement": "left",
+        "sizing": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "histogram_quantile(0.5, sum by (scenario) (rate(k6_http_req_duration_seconds{k8s_cluster=~\"$k8s_cluster\",namespace=\"$namespace\"}[$__range])))",
+          "instant": true,
+          "legendFormat": "{{scenario}} p50",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          }
+        },
+        {
+          "refId": "B",
+          "expr": "histogram_quantile(0.9, sum by (scenario) (rate(k6_http_req_duration_seconds{k8s_cluster=~\"$k8s_cluster\",namespace=\"$namespace\"}[$__range])))",
+          "instant": true,
+          "legendFormat": "{{scenario}} p90",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          }
+        },
+        {
+          "refId": "C",
+          "expr": "histogram_quantile(0.95, sum by (scenario) (rate(k6_http_req_duration_seconds{k8s_cluster=~\"$k8s_cluster\",namespace=\"$namespace\"}[$__range])))",
+          "instant": true,
+          "legendFormat": "{{scenario}} p95",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          }
+        },
+        {
+          "refId": "D",
+          "expr": "histogram_quantile(0.99, sum by (scenario) (rate(k6_http_req_duration_seconds{k8s_cluster=~\"$k8s_cluster\",namespace=\"$namespace\"}[$__range])))",
+          "instant": true,
+          "legendFormat": "{{scenario}} p99",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${datasource}"
+          }
+        }
+      ]
+    },
+    {
       "type": "stat",
       "title": "CPU efficiency (range avg)",
       "id": 14,
@@ -772,7 +942,7 @@
         "h": 8,
         "w": 4,
         "x": 0,
-        "y": 33
+        "y": 41
       },
       "fieldConfig": {
         "defaults": {
@@ -836,7 +1006,7 @@
         "h": 8,
         "w": 8,
         "x": 4,
-        "y": 33
+        "y": 41
       },
       "fieldConfig": {
         "defaults": {
@@ -889,7 +1059,7 @@
         "h": 8,
         "w": 4,
         "x": 12,
-        "y": 33
+        "y": 41
       },
       "fieldConfig": {
         "defaults": {
@@ -953,7 +1123,7 @@
         "h": 8,
         "w": 8,
         "x": 16,
-        "y": 33
+        "y": 41
       },
       "fieldConfig": {
         "defaults": {
@@ -1006,7 +1176,7 @@
         "h": 7,
         "w": 16,
         "x": 0,
-        "y": 41
+        "y": 49
       },
       "fieldConfig": {
         "defaults": {
@@ -1076,7 +1246,7 @@
         "h": 7,
         "w": 8,
         "x": 16,
-        "y": 41
+        "y": 49
       },
       "fieldConfig": {
         "defaults": {
@@ -1140,7 +1310,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 48
+        "y": 56
       },
       "panels": []
     },
@@ -1157,7 +1327,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 49
+        "y": 57
       },
       "fieldConfig": {
         "defaults": {
@@ -1255,7 +1425,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 49
+        "y": 57
       },
       "fieldConfig": {
         "defaults": {
@@ -1316,7 +1486,7 @@
         "h": 8,
         "w": 24,
         "x": 0,
-        "y": 57
+        "y": 65
       },
       "fieldConfig": {
         "defaults": {
@@ -1364,7 +1534,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 65
+        "y": 73
       },
       "panels": []
     },
@@ -1381,7 +1551,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 66
+        "y": 74
       },
       "fieldConfig": {
         "defaults": {
@@ -1478,7 +1648,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 66
+        "y": 74
       },
       "fieldConfig": {
         "defaults": {
@@ -1539,7 +1709,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 74
+        "y": 82
       },
       "fieldConfig": {
         "defaults": {
@@ -1652,7 +1822,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 74
+        "y": 82
       },
       "fieldConfig": {
         "defaults": {
@@ -1700,7 +1870,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 82
+        "y": 90
       },
       "panels": []
     },
@@ -1717,7 +1887,7 @@
         "h": 8,
         "w": 8,
         "x": 0,
-        "y": 83
+        "y": 91
       },
       "fieldConfig": {
         "defaults": {
@@ -1805,7 +1975,7 @@
         "h": 8,
         "w": 8,
         "x": 8,
-        "y": 83
+        "y": 91
       },
       "fieldConfig": {
         "defaults": {
@@ -1875,7 +2045,7 @@
         "h": 8,
         "w": 8,
         "x": 16,
-        "y": 83
+        "y": 91
       },
       "fieldConfig": {
         "defaults": {
@@ -1926,7 +2096,7 @@
         "h": 8,
         "w": 8,
         "x": 0,
-        "y": 91
+        "y": 99
       },
       "fieldConfig": {
         "defaults": {
@@ -2024,7 +2194,7 @@
         "h": 8,
         "w": 8,
         "x": 8,
-        "y": 91
+        "y": 99
       },
       "fieldConfig": {
         "defaults": {
@@ -2094,7 +2264,7 @@
         "h": 8,
         "w": 8,
         "x": 16,
-        "y": 91
+        "y": 99
       },
       "fieldConfig": {
         "defaults": {
