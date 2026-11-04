@@ -880,6 +880,20 @@ Argo CD `challenge-round4` → `bench-all` → **Create Job** · Grafana `namesp
 
 ---
 
+# Round 4 · Improved? — before vs. after
+
+<div class="grid grid-cols-[auto_1fr] gap-x-6 gap-y-3 items-center mt-2">
+
+<div class="text-lg font-bold text-[#B9C6E8]">Before<br/><span class="text-sm font-normal">utilization 70%</span></div>
+<div class="h-44"><Shot src="/results/round4-improved-before.png" /></div>
+
+<div class="text-lg font-bold text-[#B9C6E8]">Improved?<br/><span class="text-sm font-normal">utilization 20%</span></div>
+<div class="h-44"><Shot src="/results/round4-improved-after.png" /></div>
+
+</div>
+
+---
+
 # Round 5 · scale to zero — setup
 
 <div class="grid grid-cols-[1fr_1fr] gap-8 mt-2">
