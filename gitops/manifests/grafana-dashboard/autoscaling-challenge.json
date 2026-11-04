@@ -534,32 +534,19 @@
       ]
     },
     {
-      "type": "row",
-      "title": "SLO & efficiency",
-      "collapsed": false,
-      "id": 9,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 18
-      },
-      "panels": []
-    },
-    {
-      "type": "stat",
+      "type": "timeseries",
       "title": "Availability",
       "id": 10,
       "datasource": {
         "type": "prometheus",
         "uid": "${datasource}"
       },
-      "description": "Successful (expected) k6 requests / all k6 requests in the selected time range.",
+      "description": "Successful (expected) k6 requests / all k6 requests, per rate interval. Failed = status outside 200-399 or no response within the 5s k6 timeout. Y axis auto-scales so small dips show.",
       "gridPos": {
-        "h": 8,
-        "w": 4,
+        "h": 6,
+        "w": 24,
         "x": 0,
-        "y": 19
+        "y": 18
       },
       "fieldConfig": {
         "defaults": {
@@ -582,33 +569,60 @@
             ]
           },
           "color": {
-            "mode": "thresholds"
+            "mode": "fixed",
+            "fixedColor": "green"
           },
-          "decimals": 2
+          "decimals": 2,
+          "max": 1,
+          "custom": {
+            "lineWidth": 2,
+            "fillOpacity": 0,
+            "showPoints": "never",
+            "thresholdsStyle": {
+              "mode": "line+area"
+            }
+          }
         },
         "overrides": []
       },
       "options": {
-        "reduceOptions": {
+        "legend": {
+          "displayMode": "list",
+          "placement": "bottom",
           "calcs": [
-            "lastNotNull"
+            "mean",
+            "min"
           ]
         },
-        "colorMode": "value",
-        "graphMode": "none",
-        "textMode": "value"
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
       },
       "targets": [
         {
           "refId": "A",
-          "expr": "sum(increase(k6_http_reqs_total{k8s_cluster=~\"$k8s_cluster\",namespace=\"$namespace\",expected_response=\"true\"}[$__range])) / sum(increase(k6_http_reqs_total{k8s_cluster=~\"$k8s_cluster\",namespace=\"$namespace\"}[$__range]))",
-          "instant": true,
+          "expr": "sum(rate(k6_http_reqs_total{k8s_cluster=~\"$k8s_cluster\",namespace=\"$namespace\",expected_response=\"true\"}[$rate_interval])) / sum(rate(k6_http_reqs_total{k8s_cluster=~\"$k8s_cluster\",namespace=\"$namespace\"}[$rate_interval]))",
           "datasource": {
             "type": "prometheus",
             "uid": "${datasource}"
-          }
+          },
+          "legendFormat": "availability"
         }
       ]
+    },
+    {
+      "type": "row",
+      "title": "SLO & efficiency",
+      "collapsed": false,
+      "id": 9,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 24
+      },
+      "panels": []
     },
     {
       "type": "timeseries",
@@ -621,9 +635,9 @@
       "description": "From the k6 native histogram over the rate interval: p50-p95 of all scenarios together, plus p99 per scenario (scenarios run one after another).",
       "gridPos": {
         "h": 8,
-        "w": 14,
-        "x": 4,
-        "y": 19
+        "w": 18,
+        "x": 0,
+        "y": 25
       },
       "fieldConfig": {
         "defaults": {
@@ -702,7 +716,7 @@
         "h": 8,
         "w": 6,
         "x": 18,
-        "y": 19
+        "y": 25
       },
       "fieldConfig": {
         "defaults": {
@@ -758,7 +772,7 @@
         "h": 8,
         "w": 4,
         "x": 0,
-        "y": 27
+        "y": 33
       },
       "fieldConfig": {
         "defaults": {
@@ -822,7 +836,7 @@
         "h": 8,
         "w": 8,
         "x": 4,
-        "y": 27
+        "y": 33
       },
       "fieldConfig": {
         "defaults": {
@@ -875,7 +889,7 @@
         "h": 8,
         "w": 4,
         "x": 12,
-        "y": 27
+        "y": 33
       },
       "fieldConfig": {
         "defaults": {
@@ -939,7 +953,7 @@
         "h": 8,
         "w": 8,
         "x": 16,
-        "y": 27
+        "y": 33
       },
       "fieldConfig": {
         "defaults": {
@@ -992,7 +1006,7 @@
         "h": 7,
         "w": 16,
         "x": 0,
-        "y": 35
+        "y": 41
       },
       "fieldConfig": {
         "defaults": {
@@ -1062,7 +1076,7 @@
         "h": 7,
         "w": 8,
         "x": 16,
-        "y": 35
+        "y": 41
       },
       "fieldConfig": {
         "defaults": {
@@ -1126,7 +1140,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 42
+        "y": 48
       },
       "panels": []
     },
@@ -1143,7 +1157,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 43
+        "y": 49
       },
       "fieldConfig": {
         "defaults": {
@@ -1241,7 +1255,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 43
+        "y": 49
       },
       "fieldConfig": {
         "defaults": {
@@ -1302,7 +1316,7 @@
         "h": 8,
         "w": 24,
         "x": 0,
-        "y": 51
+        "y": 57
       },
       "fieldConfig": {
         "defaults": {
@@ -1350,7 +1364,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 59
+        "y": 65
       },
       "panels": []
     },
@@ -1367,7 +1381,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 60
+        "y": 66
       },
       "fieldConfig": {
         "defaults": {
@@ -1464,7 +1478,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 60
+        "y": 66
       },
       "fieldConfig": {
         "defaults": {
@@ -1525,7 +1539,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 68
+        "y": 74
       },
       "fieldConfig": {
         "defaults": {
@@ -1638,7 +1652,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 68
+        "y": 74
       },
       "fieldConfig": {
         "defaults": {
@@ -1686,7 +1700,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 76
+        "y": 82
       },
       "panels": []
     },
@@ -1703,7 +1717,7 @@
         "h": 8,
         "w": 8,
         "x": 0,
-        "y": 77
+        "y": 83
       },
       "fieldConfig": {
         "defaults": {
@@ -1791,7 +1805,7 @@
         "h": 8,
         "w": 8,
         "x": 8,
-        "y": 77
+        "y": 83
       },
       "fieldConfig": {
         "defaults": {
@@ -1861,7 +1875,7 @@
         "h": 8,
         "w": 8,
         "x": 16,
-        "y": 77
+        "y": 83
       },
       "fieldConfig": {
         "defaults": {
@@ -1912,7 +1926,7 @@
         "h": 8,
         "w": 8,
         "x": 0,
-        "y": 85
+        "y": 91
       },
       "fieldConfig": {
         "defaults": {
@@ -2010,7 +2024,7 @@
         "h": 8,
         "w": 8,
         "x": 8,
-        "y": 85
+        "y": 91
       },
       "fieldConfig": {
         "defaults": {
@@ -2080,7 +2094,7 @@
         "h": 8,
         "w": 8,
         "x": 16,
-        "y": 85
+        "y": 91
       },
       "fieldConfig": {
         "defaults": {
