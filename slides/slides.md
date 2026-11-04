@@ -1145,15 +1145,7 @@ Argo CD `challenge-round6` → `bench-all` → **Create Job** · Grafana `namesp
 
 # Leaderboard 🏆
 
-<div class="mt-6 text-xl">
-
-1. availability **≥ 99.9 %** — otherwise you're out
-2. lowest **p99** latency
-3. tie-breaker: fewest **avg. app Pods**
-
-</div>
-
-<div class="kcd-source">One <code>bench-all</code> run. Every cluster remote-writes to a central Prometheus — results compared across clusters, anonymized.</div>
+<div class="h-96 mt-4 flex items-center justify-center rounded-lg border-2 border-dashed border-[#B9C6E8] text-3xl text-[#B9C6E8]">Your runs over here</div>
 
 ---
 
