@@ -20,6 +20,14 @@ spec:
         alertmanager:
           enabled: false
 
+        # nothing alerts (no Alertmanager) and the dashboard uses none of the recording rules
+        defaultRules:
+          create: false
+
+        # apiserver histograms are ~45k series nobody looks at here
+        kubeApiServer:
+          enabled: false
+
         # k3s embeds these in the k3s binary - nothing to scrape
         kubeControllerManager:
           enabled: false
@@ -31,9 +39,17 @@ spec:
           enabled: false
 
         # container CPU / memory (cAdvisor) at the same 5s as everything else - the chart defaults it to 10s
+        # only cAdvisor: the kubelet's own /metrics is ~65k series on k3s (it carries the embedded control plane's too)
         kubelet:
           serviceMonitor:
             cAdvisorInterval: 5s
+            kubelet: false
+            probes: false
+            # the dashboard reads only these two
+            cAdvisorMetricRelabelings:
+            - action: keep
+              sourceLabels: [__name__]
+              regex: container_cpu_usage_seconds_total|container_memory_working_set_bytes
 
         # no admission webhook jobs (helm hooks) - keeps the Argo CD sync simple
         prometheusOperator:
@@ -43,6 +59,9 @@ spec:
             enabled: false
 
         grafana:
+          # Grafana's own metrics are ~7k series
+          serviceMonitor:
+            enabled: false
           # public tutorial credentials
           adminUser: admin
           adminPassword: "@utoSc4ling"

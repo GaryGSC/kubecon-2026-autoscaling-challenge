@@ -6,6 +6,7 @@
 #   (single instance - drop the HA scaffolding)
 # - config-domain: added the 127.0.0.1.sslip.io domain
 # - config-observability: added the Prometheus metrics settings
+# - autoscaler, controller, webhook: memory request 100Mi -> 40Mi (they use ~25-35Mi on the single-node setup)
 #
 # Copyright 2018 The Knative Authors
 #
@@ -8960,7 +8961,7 @@ spec:
           resources:
             requests:
               cpu: 100m
-              memory: 100Mi
+              memory: 40Mi
             limits:
               cpu: 1000m
               memory: 1000Mi
@@ -9085,7 +9086,7 @@ spec:
           resources:
             requests:
               cpu: 100m
-              memory: 100Mi
+              memory: 40Mi
             limits:
               cpu: 1000m
               memory: 1000Mi
@@ -9212,7 +9213,7 @@ spec:
           resources:
             requests:
               cpu: 100m
-              memory: 100Mi
+              memory: 40Mi
             limits:
               cpu: 500m
               memory: 500Mi

@@ -30,7 +30,8 @@ spec:
         resources:
           requests:
             cpu: 50m
-            memory: 256Mi
+            # uses ~50Mi on the single-node setup
+            memory: 64Mi
   - repoURL: https://istio-release.storage.googleapis.com/charts
     chart: gateway
     targetRevision: 1.29.10
@@ -44,7 +45,8 @@ spec:
         resources:
           requests:
             cpu: 100m
-            memory: 128Mi
+            # uses ~60-70Mi
+            memory: 80Mi
           limits:
             cpu: "2"
             memory: 1Gi
