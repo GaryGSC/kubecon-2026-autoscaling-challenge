@@ -988,7 +988,7 @@ Argo CD `challenge-round5` → wait for 0 Pods → `bench-all` → **Create Job*
 
 ---
 
-# Round 6 · BFF → backend — setup
+# Round 6 · BFF (Backend-For-Frontend) → backend — setup
 
 ```text
 k6 ──► BFF (app, MODE=bff, 10 workers) ──► backend (10 workers, sleeps minWait..maxWait)
