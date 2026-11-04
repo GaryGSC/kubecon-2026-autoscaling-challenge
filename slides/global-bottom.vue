@@ -1,6 +1,6 @@
 <template>
   <div v-if="$nav.currentPage > 1" class="slide-number">
-    <SlideCurrentNo /> / <SlidesTotal />
+    {{ $nav.currentPage }} / {{ $nav.total }}
   </div>
 </template>
 
