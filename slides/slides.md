@@ -633,16 +633,16 @@ Argo CD `challenge-round2` → `bench-all` → **Create Job** · Grafana `namesp
 <div>
 
 - **two app containers**, one scaling unit
-- php-fpm `pm = static`, `FPM_WORKERS=10`
+- php-fpm `pm = static`, `FPM_WORKERS=5` — **on purpose** only 5
+- Knative, target **10** — the mismatch is the trap
 - extra requests wait in the php-fpm **listen backlog**
-- Knative, target 10
 
 </div>
 
 ```text
 Pod                       requests
 ├── nginx      :8080 ─┐     25m
-├── php-fpm    :9000 ◄┘     50m   (10 workers)
+├── php-fpm    :9000 ◄┘     50m   (5 workers!)
 └── queue-proxy (Knative)
 ```
 
