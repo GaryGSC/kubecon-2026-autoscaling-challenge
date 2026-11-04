@@ -41,8 +41,9 @@ cd kubecon-2026-autoscaling-challenge
 
 ### Killercoda
 
-Scenario in [killercoda/autoscaling-challenge](killercoda/autoscaling-challenge/) (Ubuntu backend, runs `up.sh` in the
-background). Killercoda environments are small - fine to follow along, tight for the full stack.
+Scenario in [killercoda/autoscaling-challenge](killercoda/autoscaling-challenge/) (backend `kubernetes-kubeadm-1node-4GB`,
+no k3d: the background script installs metrics-server and runs `KUBE_CONTEXT=<current> up.sh`). 4 GB is fine to follow
+along, tight for the full stack.
 
 ## What's inside
 

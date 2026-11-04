@@ -5,11 +5,12 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 
 CLUSTER=autoscaling
-# never touch whatever the current kubectl context points at
-K="kubectl --context k3d-$CLUSTER"
+# KUBE_CONTEXT=<context> installs into an existing cluster (e.g. Killercoda kubeadm) instead of creating k3d;
+# otherwise never touch whatever the current kubectl context points at
+K="kubectl --context ${KUBE_CONTEXT:-k3d-$CLUSTER}"
 TIMEOUT=${TIMEOUT:-900}
 
-if ! k3d cluster get "$CLUSTER" >/dev/null 2>&1; then
+if [ -z "${KUBE_CONTEXT:-}" ] && ! k3d cluster get "$CLUSTER" >/dev/null 2>&1; then
   k3d cluster create --config k3d/cluster.yaml
 fi
 
@@ -26,7 +27,10 @@ echo "==> Waiting for the apps - up to ${TIMEOUT}s"
 # platform apps must be Synced + Healthy; the round apps (one per namespace) only Synced -
 # their Knative services keep warming up after that and waiting for all six Healthy would be slow
 PLATFORM_APPS="platform-istio platform-knative-serving platform-kube-prometheus-stack"
-ROUND_APPS="challenge-round1-cpu challenge-round2 challenge-round3 challenge-round4 challenge-round5 challenge-round6"
+# without the k3d load balancer the Istio gateway Service (type LoadBalancer) never gets an address,
+# so Argo CD keeps platform-istio Progressing - wait for it like a round app (Synced only)
+[ -n "${KUBE_CONTEXT:-}" ] && PLATFORM_APPS="platform-knative-serving platform-kube-prometheus-stack" && ROUND_APPS_EXTRA="platform-istio"
+ROUND_APPS="${ROUND_APPS_EXTRA:-} challenge-round1-cpu challenge-round2 challenge-round3 challenge-round4 challenge-round5 challenge-round6"
 deadline=$((SECONDS + TIMEOUT))
 while :; do
   ready=0

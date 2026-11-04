@@ -8,6 +8,8 @@ Login `admin` / `@utoSc4ling` (public, tutorial only):
 - [Grafana]({{TRAFFIC_HOST1_30030}}/d/autoscaling-challenge) - dashboard **Autoscaling Reality Check**, port `30030`
 - [Prometheus]({{TRAFFIC_HOST1_30090}}) - port `30090`
 
+All three are NodePorts on `controlplane`; the links use Killercoda's traffic port forwarding.
+
 ## Six rounds, side by side
 
 Every round is its own namespace + Argo CD app (`challenge-<round>`), all running at once.

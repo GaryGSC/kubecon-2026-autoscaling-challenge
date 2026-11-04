@@ -17,7 +17,7 @@ Scale up and scale down are **different disciplines**. This scenario covers **Po
 
 ## What is being set up
 
-A single-node k3d cluster with:
+A single-node kubeadm cluster (node `controlplane`, 4 GB) with:
 
 - **Argo CD** - GitOps, one app + namespace per round
 - **Istio + Knative Serving** - the second autoscaler (requests in flight)
@@ -28,5 +28,5 @@ The technology doesn't matter - Flux instead of Argo CD, KEDA instead of Knative
 
 Setup runs in the background and takes 5–10 minutes (`tail -f /root/setup.log`).
 
-> Killercoda environments are small. If Pods stay `Pending`, use the local k3d or Codespaces setup from the
+> 4 GB is tight for the full stack. If Pods stay `Pending`, use the local k3d or Codespaces setup from the
 > [README](https://github.com/depeche-io/kubecon-2026-autoscaling-challenge).
