@@ -1104,6 +1104,7 @@ Argo CD `challenge-round6` → `bench-all` → **Create Job** · Grafana `namesp
 
 - timeouts **shrink along the chain**: client > BFF > backend
 - timeouts follow the SLO, not the defaults
+- **backend deadline 2.5 s → 3.1 s** — `slow` waits up to 3 s
 - propagate deadlines — don't work for callers who are gone (499)
 
 </div>
