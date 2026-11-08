@@ -11,7 +11,7 @@ Every round is its own Argo CD app in its own namespace, and all six run side by
 | 5 | `round5` | Knative KPA | [challenge-round5](http://localhost:30080/applications/argocd/challenge-round5) |
 | 6 | `round6` | Knative KPA | [challenge-round6](http://localhost:30080/applications/argocd/challenge-round6) |
 
-Links assume the local k3d setup (`localhost:30080`). In Codespaces / Killercoda replace the host with the forwarded port URL.
+Links assume the local k3d setup (`localhost:30080`). In Codespaces / [Killercoda](https://killercoda.com/autoscaling-reality-check/course/killercoda/autoscaling-challenge) replace the host with the forwarded port URL.
 
 ## Workflow
 

@@ -138,7 +138,7 @@ cd kubecon-2026-autoscaling-challenge
 
 **GitHub Codespaces** — *Code* → *Codespaces* → *Create codespace on main* (`up.sh` runs on start)
 
-**Killercoda** — *Autoscaling Reality Check* scenario (tight for the full stack)
+**Killercoda** — [killercoda.com/autoscaling-reality-check](https://killercoda.com/autoscaling-reality-check/course/killercoda/autoscaling-challenge) (in-browser, tight for the full stack)
 
 <div class="mt-4">
 

@@ -6,6 +6,7 @@ You get a pre-configured Pod-level autoscaling setup, hit it with a mixed fast/s
 until the efficiency is no longer terrible. Node-level autoscaling is out of scope - the cluster is a single node.
 
 - **Scenarios / rounds, tuning and links:** [SCENARIOS.md](SCENARIOS.md)
+- **Killercoda (in-browser, no install):** <https://killercoda.com/autoscaling-reality-check/course/killercoda/autoscaling-challenge>
 - **Slides:** [slides/](slides/) (`cd slides && npm install && npm run dev`)
 
 ## Credentials (public, tutorial only)
@@ -41,7 +42,9 @@ cd kubecon-2026-autoscaling-challenge
 
 ### Killercoda
 
-Scenario in [killercoda/autoscaling-challenge](killercoda/autoscaling-challenge/) (backend `kubernetes-kubeadm-1node-4GB`,
+Open the scenario in the browser: **<https://killercoda.com/autoscaling-reality-check/course/killercoda/autoscaling-challenge>**
+
+Source in [killercoda/autoscaling-challenge](killercoda/autoscaling-challenge/) (backend `kubernetes-kubeadm-1node-4GB`,
 no k3d: the background script installs metrics-server and runs `KUBE_CONTEXT=<current> up.sh`). 4 GB is fine to follow
 along, tight for the full stack.
 
